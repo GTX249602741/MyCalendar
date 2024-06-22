@@ -8,7 +8,7 @@ import router from '@ohos.router'
 @Entry
 @Component
 struct CreateSchedulePage {
-  @State title: string = ''
+  @State title: string = undefined
 
   @State content: string = ''
 
@@ -113,22 +113,45 @@ struct CreateSchedulePage {
             scheduleModel.EndDate = this.selectedEndDate
             scheduleModel.IsFinish = 0
             if (this.fullDayFlag == false) {
-              scheduleModel.WholeDay = 0
+              scheduleModel.WholeDay = false
               scheduleModel.HourStart = this.selectedStartHour
               scheduleModel.MinuteStart = this.selectedStartMinute
               scheduleModel.HourEnd = this.selectedEndHour
               scheduleModel.MinuteEnd = this.selectedEndMinute
             }else {
-              scheduleModel.WholeDay = 1
+              scheduleModel.WholeDay =
               scheduleModel.HourStart = null
               scheduleModel.MinuteStart = null
               scheduleModel.HourEnd = null
               scheduleModel.MinuteEnd = null
             }
-            scheduleModel.Title = this.title
-            scheduleModel.content = this.content
-            DbUtil.insert('DATE',scheduleModel,Const)
-            router.back()
+            if (this.title == undefined) {
+              AlertDialog.show(
+                {
+                  title: '',
+                  message: '标题不能为空',
+                  autoCancel: true,
+                  alignment: DialogAlignment.Center,
+                  gridCount: 3,
+                  confirm: {
+                    value: '确认',
+                    action: () => {
+
+                    }
+                  },
+                  cancel: () => {
+
+                  }
+                }
+              )
+            }else {
+              scheduleModel.Title = this.title
+              console.log('test5',this.title)
+              scheduleModel.content = this.content
+              DbUtil.insert('DATE',scheduleModel,Const)
+              router.back()
+            }
+
           })
       }
       .margin({top:10})

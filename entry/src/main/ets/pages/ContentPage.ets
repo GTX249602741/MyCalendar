@@ -38,7 +38,7 @@ struct ContentPage {
 
   @State selectedEndMinute:number = this.item.MinuteEnd
 
-  @State fullDayFlag:boolean = false
+  @State fullDayFlag:boolean = this.item.WholeDay == 1?true:false
 
   day:number = this.date.getDay()
 
@@ -89,6 +89,9 @@ struct ContentPage {
             router.back()
           })
 
+        Text('日程详情')
+          .fontSize(30)
+          .margin({left:15})
 
         Blank()
         Image($r('app.media.ic_public_ok'))
@@ -103,17 +106,14 @@ struct ContentPage {
             this.item.IsFinish = 0
             if (this.fullDayFlag == false) {
               this.item.WholeDay = 0
+            }else {
+              this.item.WholeDay = 1
+            }
               this.item.HourStart = this.selectedStartHour
               this.item.MinuteStart = this.selectedStartMinute
               this.item.HourEnd = this.selectedEndHour
               this.item.MinuteEnd = this.selectedEndMinute
-            }else {
-              this.item.WholeDay = 1
-              this.item.HourStart = null
-              this.item.MinuteStart = null
-              this.item.HourEnd = null
-              this.item.MinuteEnd = null
-            }
+
             this.item.content = this.content
             let num = await DbUtil.update('DATE',this.item,Const,this.item.Title)
             console.log('test6',num.toString())
@@ -123,6 +123,14 @@ struct ContentPage {
       .margin({top:10})
       .width('95%')
 
+      Row(){
+        Text('标题')
+          .fontSize(15)
+      }
+      .width('100%')
+      .justifyContent(FlexAlign.Center)
+      .margin({top:50})
+
 
       Row(){
         Text(this.title)
@@ -130,8 +138,16 @@ struct ContentPage {
       }
       .width('100%')
       .justifyContent(FlexAlign.Center)
-      .margin({top:70})
-      .borderRadius(15)
+
+
+
+      Row(){
+        Text('描述:')
+          .fontSize(15)
+      }
+      .width('100%')
+      .justifyContent(FlexAlign.Start)
+      .margin({top:30,left:10})
 
 
       Row(){
@@ -145,7 +161,7 @@ struct ContentPage {
           .height('100%')
       }.width('95%')
       .height('30%')
-      .margin({top:20})
+      .margin({top:10})
       .backgroundColor('#E3E3E3')
       .borderRadius(15)
       .builder()
@@ -158,7 +174,7 @@ struct ContentPage {
           .fontSize(20)
           .margin({left:10})
         Blank()
-        Toggle({type:ToggleType.Switch})
+        Toggle({type:ToggleType.Switch,isOn:this.fullDayFlag})
           .selectedColor(Color.Blue)
           .size({width:'40',height:'40'})
           .margin({right:10})
