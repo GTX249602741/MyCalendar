@@ -23,7 +23,7 @@ export  struct MyOneDayPage {
   scroller:Scroller = new Scroller()
 
   controller:CustomDialogController = new CustomDialogController({
-    builder:MonthDialogPage({currentYear:$currentYear,currentMonth:$currentMonth,currentDate:$currentDate,scheduleModelArray:$scheduleModelArray,hasCalendar:this.hasCalendar}),
+    builder:MonthDialogPage({currentYear:$currentYear,currentMonth:$currentMonth,currentDate:$currentDate,scheduleModelArray:$scheduleModelArray,hasCalendar:$hasCalendar}),
     alignment:DialogAlignment.Bottom
   })
 
@@ -120,6 +120,9 @@ export  struct MyOneDayPage {
             }
             .height('10%')
             .width('100%')
+            .onClick(()=>{
+              router.pushUrl({url:'pages/ContentPage',params:{item:item}},router.RouterMode.Single)
+            })
           })
         }
         .height('70%')

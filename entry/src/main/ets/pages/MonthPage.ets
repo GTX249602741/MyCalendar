@@ -32,6 +32,8 @@ export struct MonthPage {
 
   scroller:Scroller = new Scroller()
 
+  @State show:boolean = false
+
   @Styles builder(){
     .backgroundColor('rgba(243, 243, 243, 0.6)')
     .backdropBlur(20)
@@ -106,6 +108,10 @@ export struct MonthPage {
     this.getScheduleList()
   }
 
+  onPageShow(){
+    this.getScheduleList()
+  }
+
   onBackPress(){
     router.pushUrl({url:'pages/Index'},router.RouterMode.Single)
    // AppStorage.SetOrCreate('currentYear',this.currentYear)
@@ -155,39 +161,11 @@ export struct MonthPage {
       List({space:15,scroller:this.scroller}){
         ForEach(this.scheduleModelArray,(item:ScheduleModel)=>{
           ListItem(){
-            Row() {
-              Column({space:10}){
-                Text(item.WholeDay == 1? '全':item.EndDate == item.StartDate?item.HourStart.toString() + ':' +(item.MinuteStart <10? '0'+item.MinuteStart.toString():
-                item.MinuteStart.toString()):item.StartDate == this.currentDate?item.HourStart.toString() + ':' +(item.MinuteStart <10? '0'+item.MinuteStart.toString():item.MinuteStart.toString()):
-                item.EndDate == this.currentDate?item.HourEnd.toString() + ':' +(item.MinuteEnd <10? '0'+item.MinuteEnd.toString():item.MinuteEnd.toString()):'全')
-                  .fontSize(10)
-
-                Text((item.WholeDay == 1? '天':item.EndDate == item.StartDate?item.HourEnd.toString() + ':' +(item.MinuteEnd <10? '0'+item.MinuteEnd.toString():
-                item.MinuteEnd.toString()):item.StartDate == this.currentDate?'开始':
-                item.EndDate == this.currentDate?'结束':'天'))
-                  .fontSize(10)
-
-              }
-              .width('10%')
-              .margin({left:10,top:10,bottom:10,right:10})
-
-              Divider()
-                .vertical(true)
-                .height(30)
-                .color('#0091FF')
-                .strokeWidth(3)
-                .lineCap(LineCapStyle.Round)
-
-              Text(item.Title)
-              .fontSize(25)
-              .margin({left:10})
-
-            }.width('100%')
-            .height(50)
-            .borderRadius(15)
-            .justifyContent(FlexAlign.Start)
-            .builder()
+            ScheduleItem({item:item,currentDate:$currentDate})
           }
+          .onClick(()=>{
+            router.pushUrl({url:'pages/ContentPage',params:{item:item}},router.RouterMode.Single)
+          })
         })
       }.width('95%')
       .height('35%')
@@ -195,4 +173,60 @@ export struct MonthPage {
     .width('100%')
     .height('100%')
   }
+}
+
+@Component
+struct ScheduleItem{
+
+  @State show:boolean = false
+
+  item:ScheduleModel
+
+  @Link currentDate:number
+
+  @Styles builder(){
+    .backgroundColor('rgba(243, 243, 243, 0.6)')
+    .backdropBlur(20)
+    .shadow({
+      color: 'rgba(0, 0, 0, 0.12)',
+      radius: 30,
+      offsetX: 1,
+      offsetY: 1})
+  }
+
+  build(){
+    Row() {
+      Column({space:10}){
+        Text(this.item.WholeDay == 1? '全':this.item.EndDate == this.item.StartDate?this.item.HourStart.toString() + ':' +(this.item.MinuteStart <10? '0'+this.item.MinuteStart.toString():
+        this.item.MinuteStart.toString()):this.item.StartDate == this.currentDate?this.item.HourStart.toString() + ':' +(this.item.MinuteStart <10? '0'+this.item.MinuteStart.toString():this.item.MinuteStart.toString()):
+        this.item.EndDate == this.currentDate?this.item.HourEnd.toString() + ':' +(this.item.MinuteEnd <10? '0'+this.item.MinuteEnd.toString():this.item.MinuteEnd.toString()):'全')
+          .fontSize(10)
+
+        Text((this.item.WholeDay == 1? '天':this.item.EndDate == this.item.StartDate?this.item.HourEnd.toString() + ':' +(this.item.MinuteEnd <10? '0'+this.item.MinuteEnd.toString():
+        this.item.MinuteEnd.toString()):this.item.StartDate == this.currentDate?'开始':
+        this.item.EndDate == this.currentDate?'结束':'天'))
+          .fontSize(10)
+
+      }
+      .width('10%')
+      .margin({left:10,top:10,bottom:10,right:10})
+
+      Divider()
+        .vertical(true)
+        .height(30)
+        .color('#0091FF')
+        .strokeWidth(3)
+        .lineCap(LineCapStyle.Round)
+
+      Text(this.item.Title)
+        .fontSize(25)
+        .margin({left:10})
+
+    }.width('100%')
+    .height(50)
+    .borderRadius(15)
+    .justifyContent(FlexAlign.Start)
+    .builder()
+  }
+
 }

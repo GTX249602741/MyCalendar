@@ -1,38 +1,42 @@
-import font from '@ohos.font'
+import router from '@ohos.router'
+import { Const, ScheduleModel } from '../model/ScheduleModel'
+
+import DbUtil from '../Util/DbUtil'
 import { DatePickerDialogPage } from './DatePickerDialogPage'
 import { DatePickerDialogPage2 } from './DatePickerDialogPage2'
-import { Const } from '../model/ScheduleModel'
-import DbUtil from '../Util/DbUtil'
-import { ScheduleModel } from '../model/ScheduleModel'
-import router from '@ohos.router'
 @Entry
 @Component
-struct CreateSchedulePage {
-  @State title: string = ''
+struct ContentPage {
 
-  @State content: string = ''
+  param:any = router.getParams()
+
+  @State item:ScheduleModel = this.param.item
+
+  @State title: string = this.item.Title
+
+  @State content: string = this.item.content
 
   date:Date = new Date()
 
-  @State selectedStartYear:number = this.date.getFullYear()
+  @State selectedStartYear:number = this.item.StartYear
 
-  @State selectedStartMonth:number = this.date.getMonth()+1
+  @State selectedStartMonth:number = this.item.StartMonth
 
-  @State selectedStartDate:number = this.date.getDate()
+  @State selectedStartDate:number = this.item.StartDate
 
-  @State selectedStartHour:number = this.date.getHours()
+  @State selectedStartHour:number = this.item.HourStart
 
-  @State selectedStartMinute:number = this.date.getMinutes()
+  @State selectedStartMinute:number = this.item.MinuteStart
 
-  @State selectedEndYear:number = this.date.getFullYear()
+  @State selectedEndYear:number = this.item.EndYear
 
-  @State selectedEndMonth:number = this.date.getMonth()+1
+  @State selectedEndMonth:number = this.item.EndMonth
 
-  @State selectedEndDate:number = this.date.getDate()
+  @State selectedEndDate:number = this.item.EndDate
 
-  @State selectedEndHour:number = this.date.getHours()
+  @State selectedEndHour:number = this.item.HourEnd
 
-  @State selectedEndMinute:number = this.date.getMinutes()
+  @State selectedEndMinute:number = this.item.MinuteEnd
 
   @State fullDayFlag:boolean = false
 
@@ -62,15 +66,6 @@ struct CreateSchedulePage {
     }
   }
 
-  @Styles builder(){
-    .backgroundColor('rgba(243, 243, 243, 0.6)')
-    .backdropBlur(20)
-    .shadow({
-      color: 'rgba(0, 0, 0, 0.12)',
-      radius: 30,
-      offsetX: 1,
-      offsetY: 1})
-  }
 
   controller:CustomDialogController = new CustomDialogController({
     builder:DatePickerDialogPage({selectedYear:$selectedStartYear,selectedMonth:$selectedStartMonth,selectedDate:$selectedStartDate,selectedHour:$selectedStartHour,selectedMinute:$selectedStartMinute,fullDayFlag:$fullDayFlag,day1:$day1}),
@@ -85,9 +80,6 @@ struct CreateSchedulePage {
     offset:{dx:0,dy:-10}
   })
 
-  onBackPress(){
-    router.pushUrl({url:'pages/Index'},router.RouterMode.Single)
-  }
   build() {
     Column(){
       Row(){
@@ -97,59 +89,50 @@ struct CreateSchedulePage {
             router.back()
           })
 
-        Text('新建日程')
-          .fontSize(30)
-          .margin({left:15})
+
         Blank()
         Image($r('app.media.ic_public_ok'))
           .size({width:30,height:30})
-          .onClick(()=>{
-            let scheduleModel = new ScheduleModel()
-            scheduleModel.StartYear = this.selectedStartYear
-            scheduleModel.StartMonth = this.selectedStartMonth
-            scheduleModel.StartDate = this.selectedStartDate
-            scheduleModel.EndYear = this.selectedEndYear
-            scheduleModel.EndMonth = this.selectedEndMonth
-            scheduleModel.EndDate = this.selectedEndDate
-            scheduleModel.IsFinish = 0
+          .onClick(async ()=>{
+            this.item.StartYear = this.selectedStartYear
+            this.item.StartMonth = this.selectedStartMonth
+            this.item.StartDate = this.selectedStartDate
+            this.item.EndYear = this.selectedEndYear
+            this.item.EndMonth = this.selectedEndMonth
+            this.item.EndDate = this.selectedEndDate
+            this.item.IsFinish = 0
             if (this.fullDayFlag == false) {
-              scheduleModel.WholeDay = 0
-              scheduleModel.HourStart = this.selectedStartHour
-              scheduleModel.MinuteStart = this.selectedStartMinute
-              scheduleModel.HourEnd = this.selectedEndHour
-              scheduleModel.MinuteEnd = this.selectedEndMinute
+              this.item.WholeDay = 0
+              this.item.HourStart = this.selectedStartHour
+              this.item.MinuteStart = this.selectedStartMinute
+              this.item.HourEnd = this.selectedEndHour
+              this.item.MinuteEnd = this.selectedEndMinute
             }else {
-              scheduleModel.WholeDay = 1
-              scheduleModel.HourStart = null
-              scheduleModel.MinuteStart = null
-              scheduleModel.HourEnd = null
-              scheduleModel.MinuteEnd = null
+              this.item.WholeDay = 1
+              this.item.HourStart = null
+              this.item.MinuteStart = null
+              this.item.HourEnd = null
+              this.item.MinuteEnd = null
             }
-            scheduleModel.Title = this.title
-            scheduleModel.content = this.content
-            DbUtil.insert('DATE',scheduleModel,Const)
+            this.item.content = this.content
+            let num = await DbUtil.update('DATE',this.item,Const,this.item.Title)
+            console.log('test6',num.toString())
             router.back()
           })
       }
       .margin({top:10})
       .width('95%')
 
-      Row(){
 
-        TextInput({text:this.title,placeholder:'标题'})
-          .placeholderColor(Color.Black)
-          .type(InputType.Normal)
-          .height(50)
-          .onChange((value=>{
-            this.title = value
-          }))
-          .builder()
-          .width('100%')
-      }.width('95%')
+      Row(){
+        Text(this.title)
+          .fontSize(20)
+      }
+      .width('100%')
+      .justifyContent(FlexAlign.Center)
       .margin({top:70})
-      .backgroundColor('#E3E3E3')
       .borderRadius(15)
-      .builder()
+
 
       Row(){
         TextArea({text:this.content,placeholder:'请输入内容'})
@@ -180,7 +163,7 @@ struct CreateSchedulePage {
           .size({width:'40',height:'40'})
           .margin({right:10})
           .onChange((isOn:boolean)=>{
-            this.fullDayFlag = !this.fullDayFlag
+            this.fullDayFlag = isOn
           })
 
       }
@@ -191,8 +174,8 @@ struct CreateSchedulePage {
       .builder()
 
       Divider()
-      .color(Color.Black)
-      .width('95%')
+        .color(Color.Black)
+        .width('95%')
 
       Row(){
         Column(){
@@ -229,8 +212,18 @@ struct CreateSchedulePage {
       .borderRadius({bottomLeft:15,bottomRight:15})
       .height(80)
       .builder()
-    }
-    .width('100%')
+    }.width('100%')
     .height('100%')
   }
+
+  @Styles builder(){
+    .backgroundColor('rgba(243, 243, 243, 0.6)')
+    .backdropBlur(20)
+    .shadow({
+      color: 'rgba(0, 0, 0, 0.12)',
+      radius: 30,
+      offsetX: 1,
+      offsetY: 1})
+  }
+
 }

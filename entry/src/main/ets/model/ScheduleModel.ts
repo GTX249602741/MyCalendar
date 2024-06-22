@@ -20,19 +20,19 @@ export const CreateTableSQL:string = '' +
 'Content TEXT)'
 
 export  const Const:ColumnInfo[] = [
-  {name:'id',columnName:'id',type:ColumnType.INTGER},
-  {name:'StartYear',columnName:'StartYear',type:ColumnType.INTGER},
-  {name:'EndYear',columnName:'EndYear',type:ColumnType.INTGER},
-  {name:'StartMonth',columnName:'StartMonth',type:ColumnType.INTGER},
-  {name:'EndMonth',columnName:'EndMonth',type:ColumnType.INTGER},
-  {name:'StartDate',columnName:'StartDate',type:ColumnType.INTGER},
-  {name:'EndDate',columnName:'EndDate',type:ColumnType.INTGER},
-  {name:'HourStart',columnName:'HourStart',type:ColumnType.INTGER},
-  {name:'HourEnd',columnName:'HourEnd',type:ColumnType.INTGER},
-  {name:'MinuteStart',columnName:'MinuteStart',type:ColumnType.INTGER},
-  {name:'MinuteEnd',columnName:'MinuteEnd',type:ColumnType.INTGER},
-  {name:'WholeDay',columnName:'WholeDay',type:ColumnType.INTGER},
-  {name:'IsFinish',columnName:'IsFinish',type:ColumnType.INTGER},
+  {name:'id',columnName:'id',type:ColumnType.INTEGER},
+  {name:'StartYear',columnName:'StartYear',type:ColumnType.INTEGER},
+  {name:'EndYear',columnName:'EndYear',type:ColumnType.INTEGER},
+  {name:'StartMonth',columnName:'StartMonth',type:ColumnType.INTEGER},
+  {name:'EndMonth',columnName:'EndMonth',type:ColumnType.INTEGER},
+  {name:'StartDate',columnName:'StartDate',type:ColumnType.INTEGER},
+  {name:'EndDate',columnName:'EndDate',type:ColumnType.INTEGER},
+  {name:'HourStart',columnName:'HourStart',type:ColumnType.INTEGER},
+  {name:'HourEnd',columnName:'HourEnd',type:ColumnType.INTEGER},
+  {name:'MinuteStart',columnName:'MinuteStart',type:ColumnType.INTEGER},
+  {name:'MinuteEnd',columnName:'MinuteEnd',type:ColumnType.INTEGER},
+  {name:'WholeDay',columnName:'WholeDay',type:ColumnType.INTEGER},
+  {name:'IsFinish',columnName:'IsFinish',type:ColumnType.INTEGER},
   {name:'Title',columnName:'Title',type:ColumnType.STRING},
   {name:'content',columnName:'Content',type:ColumnType.STRING}
 ]
@@ -63,7 +63,7 @@ export class ScheduleModel{
 
   IsFinish:number
 
-  WholeDay:Number
+  WholeDay:number
 
   Title:string
 

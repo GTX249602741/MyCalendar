@@ -6,6 +6,7 @@ export interface ColumnInfo{
 
 export enum ColumnType{
 
-  INTGER,
+  INTEGER,
   STRING
+
 }

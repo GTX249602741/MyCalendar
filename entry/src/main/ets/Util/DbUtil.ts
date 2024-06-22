@@ -124,7 +124,7 @@ export class DbUtil {
       columns.forEach(info => {
         let val = null
         switch (info.type) {
-          case ColumnType.INTGER:
+          case ColumnType.INTEGER:
             val = result.getLong(result.getColumnIndex(info.columnName))
             break
           case ColumnType.STRING:

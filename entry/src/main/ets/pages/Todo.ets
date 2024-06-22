@@ -276,6 +276,7 @@ export struct Todo {
             .swipeAction({end:this.CustomBuilder(item)})
           })
         }
+        .alignListItem(ListItemAlign.Center)
         .visibility(this.flag == true?Visibility.Visible:Visibility.None)
 
         Divider()
@@ -329,6 +330,7 @@ export struct Todo {
             .swipeAction({end:this.CustomBuilder2(item)})
           })
         }
+        .alignListItem(ListItemAlign.Center)
         .visibility(this.flag2 == true?Visibility.Visible:Visibility.None)
 
         Divider()
@@ -386,6 +388,7 @@ export struct Todo {
             .swipeAction({end:this.CustomBuilder2(item)})
           })
         }
+        .alignListItem(ListItemAlign.Center)
         .visibility(this.flag3 == true?Visibility.Visible:Visibility.None)
       }
       .width('100%')
