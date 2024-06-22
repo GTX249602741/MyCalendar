@@ -59,17 +59,12 @@ export struct MonthPage {
       if (i.StartYear <= this.currentYear && i.EndYear >= this.currentYear) {
         if (i.StartMonth == this.currentMonth && i.EndMonth == this.currentMonth) {
           if (i.StartDate <= this.currentDate && i.EndDate >= this.currentDate) {
-          /**  if (i.WholeDay == 1) {
-              this.scheduleModelArray.push(i)
-            }else if(i.WholeDay == 0)
-              if(i.StartDate != i.EndDate){
 
-              }**/
             this.scheduleModelArray.push(i)
           }
         }
         if (i.StartMonth == this.currentMonth && i.EndMonth != this.currentMonth) {
-          if (i.StartDate <= this.currentDate && i.EndDate >= this.currentDate) {
+          if (i.StartDate <= this.currentDate ) {
             this.scheduleModelArray.push(i)
           }
         }
@@ -77,7 +72,7 @@ export struct MonthPage {
           this.scheduleModelArray.push(i)
         }
         if (i.EndMonth == this.currentMonth && i.StartMonth != this.currentMonth) {
-          if (i.StartDate <= this.currentDate && i.EndDate >= this.currentDate) {
+          if (i.EndDate >= this.currentDate) {
             this.scheduleModelArray.push(i)
           }
         }
@@ -88,40 +83,6 @@ export struct MonthPage {
     }
   }
 
-  /**getScheduleListString(item:ScheduleModel):string{
-
-    let scheduleString:string[] = []
-    //日程为当天且未选全天
-    if (item.StartDate == item.EndDate&&item.WholeDay==0){
-      let stringStart:string = item.HourStart.toString()+':'+(item.MinuteStart < 10 ? '0' + item.MinuteStart.toString() : item.MinuteStart.toString())
-
-      let stringEnd:string = item.HourEnd.toString()+':'+(item.MinuteEnd < 10 ? '0' + item.MinuteEnd.toString() : item.MinuteEnd.toString())
-
-      let string:string = stringStart+stringEnd
-      return string
-    }
-    //日程为当天且选全天
-    else if (item.StartDate == item.EndDate&&item.WholeDay == 1){
-
-      return '全天'
-    }
-    //日程超过一天且今天为开始日
-    else if (item.StartDate == this.currentDate&&item.StartDate!=item.EndDate){
-      let stringStart:string = item.HourStart.toString()+':'+(item.MinuteStart < 10 ? '0' + item.MinuteStart.toString() : item.MinuteStart.toString())
-      return stringStart+'开始'
-    }
-    //日程超过一天且今天为结束日
-    else if (item.EndDate == this.currentDate&&item.StartDate!=item.EndDate){
-      let stringEnd:string = item.HourEnd.toString()+':'+(item.MinuteEnd < 10 ? '0' + item.MinuteEnd.toString() : item.MinuteEnd.toString())
-      return stringEnd+'结束'
-    }
-    //在日程范围内且不为开始天和结束天
-    else if (item.EndDate>this.currentDate&&item.StartDate<this.currentDate&&item.StartDate!=item.EndDate){
-
-      return '全天'
-    }
-  }
-**/
   aboutToAppear(): void {
 
     let today: CJDateItem = new CJDateItem(this.date,null,null,Solar.fromDate(this.date))
@@ -177,13 +138,6 @@ export struct MonthPage {
           .width(230)
           .height(50)
           .fontSize(15)
-        Text('农历')
-          .width(230)
-          .height(50)
-          .fontSize(15)
-          .onClick(()=>{
-            router.back({url:'pages/Index',params:{currentYear:this.currentYear}})
-          })
       }
       .width('100%')
       .height('7%')

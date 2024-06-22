@@ -19,8 +19,6 @@ export  struct YearPage {
 
   aboutToAppear() {
 
-
-
     for (let index = 0; index < 12
       ; index++) {
       let date :Date = new Date(this.currentYear,index)
@@ -28,17 +26,16 @@ export  struct YearPage {
     }
   }
 
- // TimerID = setInterval(()=>this.getParam(),500)
-
-  /**getParam() {
-    let param:any = router.getParams()
-    if (param == undefined) {
-      return
-    } else {
-      this.currentYear = param.currentYear
-    }
+  @Styles builder(){
+    .backgroundColor('rgba(243, 243, 243, 0.6)')
+    .backdropBlur(20)
+    .shadow({
+      color: 'rgba(0, 0, 0, 0.12)',
+      radius: 30,
+      offsetX: 1,
+      offsetY: 1})
   }
-**/
+
   getYearDays(){
     this.array = []
     for (let index = 0; index < 12
@@ -106,7 +103,7 @@ export  struct YearPage {
           })
         }
         .scrollBar(BarState.On)
-        .backgroundColor('#D6D6D6')
+        .backgroundColor(Color.White)
         .layoutWeight(2)
         .margin({top:50})
         .borderRadius(15)
@@ -117,6 +114,7 @@ export  struct YearPage {
         .height('100%')
       }
       .alignContent(Alignment.Top)
+      .builder()
     }
     .height('100%')
     .width('100%')

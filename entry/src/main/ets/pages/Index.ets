@@ -52,16 +52,21 @@ struct Index {
     predicates.equalTo('IsFinish',0)
     let array = await dbUtil.queryForList(predicates, Const)
     for(let i of array){
-      if (this.currentYear>=i.EndYear&&this.currentMonth>=i.EndMonth&&this.currentDate>=i.EndDate) {
-        if(i.HourEnd<=new Date().getHours()){
-          if(i.MinuteEnd<new Date().getMinutes()){
+      if (this.currentYear>i.EndYear) {
+        this.ArrayOutDated.push(i)
+      }
+      if(this.currentYear = i.EndYear){
+        if (this.currentMonth > i.EndMonth) {
+          this.ArrayOutDated.push(i)
+        }
+        if (this.currentMonth = i.EndMonth) {
+          if (this.currentDate > i.EndDate) {
             this.ArrayOutDated.push(i)
           }
         }
       }
 
     }
-
   }
 
   async getScheduleList(){
@@ -78,7 +83,7 @@ struct Index {
           }
         }
         if (i.StartMonth == this.currentMonth && i.EndMonth != this.currentMonth) {
-          if (i.StartDate <= this.currentDate && i.EndDate >= this.currentDate) {
+          if (i.StartDate <= this.currentDate ) {
             this.scheduleModelArray.push(i)
           }
         }
@@ -86,7 +91,7 @@ struct Index {
           this.scheduleModelArray.push(i)
         }
         if (i.EndMonth == this.currentMonth && i.StartMonth != this.currentMonth) {
-          if (i.StartDate <= this.currentDate && i.EndDate >= this.currentDate) {
+          if (i.EndDate >= this.currentDate) {
             this.scheduleModelArray.push(i)
           }
         }

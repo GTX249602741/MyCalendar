@@ -36,6 +36,32 @@ struct CreateSchedulePage {
 
   @State fullDayFlag:boolean = false
 
+  day:number = this.date.getDay()
+
+  @State day2:string = this.getDay(this.day)
+
+  @State day1:string = this.getDay(this.day)
+
+  getDay(date:number):string{
+    switch (date){
+      case 1:
+        return '一';
+      case 2:
+        return '二';
+      case 3:
+        return '三';
+      case 4:
+        return '四';
+      case 5:
+        return '五';
+      case 6:
+        return '六';
+      case 0:
+        return '日';
+
+    }
+  }
+
   @Styles builder(){
     .backgroundColor('rgba(243, 243, 243, 0.6)')
     .backdropBlur(20)
@@ -47,14 +73,14 @@ struct CreateSchedulePage {
   }
 
   controller:CustomDialogController = new CustomDialogController({
-    builder:DatePickerDialogPage({selectedYear:$selectedStartYear,selectedMonth:$selectedStartMonth,selectedDate:$selectedStartDate,selectedHour:$selectedStartHour,selectedMinute:$selectedStartMinute,fullDayFlag:$fullDayFlag}),
+    builder:DatePickerDialogPage({selectedYear:$selectedStartYear,selectedMonth:$selectedStartMonth,selectedDate:$selectedStartDate,selectedHour:$selectedStartHour,selectedMinute:$selectedStartMinute,fullDayFlag:$fullDayFlag,day1:$day1}),
     alignment:DialogAlignment.Bottom,
     offset:{dx:0,dy:-10}
 
   })
 
   controller2:CustomDialogController = new CustomDialogController({
-    builder:DatePickerDialogPage2({selectedYear:$selectedEndYear,selectedMonth:$selectedEndMonth,selectedDate:$selectedEndDate,selectedHour:$selectedEndHour,selectedMinute:$selectedEndMinute,fullDayFlag:$fullDayFlag}),
+    builder:DatePickerDialogPage2({selectedYear:$selectedEndYear,selectedMonth:$selectedEndMonth,selectedDate:$selectedEndDate,selectedHour:$selectedEndHour,selectedMinute:$selectedEndMinute,fullDayFlag:$fullDayFlag,day1:$day2}),
     alignment:DialogAlignment.Bottom,
     offset:{dx:0,dy:-10}
   })

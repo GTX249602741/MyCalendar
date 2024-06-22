@@ -27,38 +27,6 @@ export  struct MyOneDayPage {
     alignment:DialogAlignment.Bottom
   })
 
- /** async getScheduleList(){
-    this.scheduleModelArray = []
-    let predicates = new relationalStore.RdbPredicates("DATE");
-    predicates.isNotNull("Title");
-    let array = await dbUtil.queryForList(predicates, Const)
-    for (let i of array) {
-      if (i.StartYear <= this.currentYear && i.EndYear >= this.currentYear) {
-        if (i.StartMonth == this.currentMonth && i.EndMonth == this.currentMonth) {
-          if (i.StartDate <= this.currentDate && i.EndDate >= this.currentDate) {
-            this.scheduleModelArray.push(i)
-          }
-        }
-        if (i.StartMonth == this.currentMonth && i.EndMonth != this.currentMonth) {
-          if (i.StartDate <= this.currentDate && i.EndDate >= this.currentDate) {
-            this.scheduleModelArray.push(i)
-          }
-        }
-        if (i.StartMonth < this.currentMonth && i.EndMonth > this.currentMonth) {
-          this.scheduleModelArray.push(i)
-        }
-        if (i.EndMonth == this.currentMonth && i.StartMonth != this.currentMonth) {
-          if (i.StartDate <= this.currentDate && i.EndDate >= this.currentDate) {
-            this.scheduleModelArray.push(i)
-          }
-        }
-      }
-    }
-    if(this.scheduleModelArray.length!=0){
-      this.hasCalendar = true
-    }
-  }
-**/
 
   @Styles builder(){
     .backgroundColor('rgba(243, 243, 243, 0.6)')

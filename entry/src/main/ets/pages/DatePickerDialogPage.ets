@@ -6,21 +6,20 @@ export  struct DatePickerDialogPage {
 
   date:Date = new Date()
 
+  @Link selectedHour:number
+
+  @Link selectedMinute:number
+
+  @Link day1:string
+
   @Link selectedYear:number
 
   @Link selectedMonth:number
 
   @Link selectedDate:number
 
-  @Link selectedHour:number
-
-  @Link selectedMinute:number
-
   @Link fullDayFlag:boolean
 
-  @State day:number = this.date.getDay()
-
-  @State day1:string = this.getDay(this.day)
 
   controller:CustomDialogController
 
@@ -51,20 +50,21 @@ export  struct DatePickerDialogPage {
         DatePicker({
           start: new Date('1970-1-1'),
           end: new Date('2100-1-1'),
-          selected: this.date
+          selected: new Date(this.selectedYear,this.selectedMonth-1,this.selectedDate)
         })
           .width(this.fullDayFlag == false? '60%':'100%')
           .height('40%')
           .onChange((value: DatePickerResult) => {
+
             this.selectedYear = value.year
             this.selectedMonth = value.month+1
             this.selectedDate = value.day
+
             let date = new Date(value.year,value.month,value.day)
             this.day1 = this.getDay(date.getDay())
-            console.info('select current date is: ' + JSON.stringify(value))
           })
         TimePicker({
-          selected: this.date,
+          selected:new Date(this.selectedYear,this.selectedMonth-1,this.selectedDate,this.selectedHour,this.selectedMinute)
         })
           .visibility(this.fullDayFlag == false? Visibility.Visible:Visibility.None)
           .width('20%')
@@ -73,6 +73,7 @@ export  struct DatePickerDialogPage {
           .onChange((value: TimePickerResult) => {
             this.selectedHour = value.hour
             this.selectedMinute = value.minute
+
             console.info('select current date is: ' + JSON.stringify(value))
           })
       }
