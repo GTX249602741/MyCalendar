@@ -42,6 +42,27 @@ export class DbUtil {
     })
   }
 
+  update(tableName: string, obj: ScheduleModel, columns: ColumnInfo[],TitleName:string): Promise<number> {
+    return new Promise((resolve, reject) => {
+      // 1.构建更新数据
+      let value = this.buildValueBucket(obj, columns)
+
+      let  predicates = new relationalStore.RdbPredicates(tableName);
+
+      predicates.equalTo('Title',TitleName)
+      // 2.更新
+      this.rdbStore.update( value, predicates,(err, id) => {
+        if (err) {
+          Logger.error('test5','更新失败！', JSON.stringify(err))
+          reject(err)
+        } else {
+          Logger.debug('test5','更新成功！更新id：', id.toString())
+          resolve(id)
+        }
+      })
+    })
+  }
+
   insert(tableName: string, obj: ScheduleModel, columns: ColumnInfo[]): Promise<number> {
     return new Promise((resolve, reject) => {
       // 1.构建新增数据

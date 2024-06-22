@@ -68,6 +68,7 @@ struct Index {
     this.scheduleModelArray = []
     let predicates = new relationalStore.RdbPredicates("DATE");
     predicates.isNotNull("Title");
+    predicates.equalTo('IsFinish',0)
     let array = await dbUtil.queryForList(predicates, Const)
     for (let i of array) {
       if (i.StartYear <= this.currentYear && i.EndYear >= this.currentYear) {

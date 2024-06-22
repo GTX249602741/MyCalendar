@@ -13,13 +13,13 @@ export  struct YearPage {
 
   @State array: Date[] = []
 
-  @State currentMonth:number = 0
+  @State currentMonth:number = this.date.getMonth()+1
 
   @Link currentYear:number
 
   aboutToAppear() {
 
-    this.currentMonth = this.date.getMonth()+1
+
 
     for (let index = 0; index < 12
       ; index++) {
@@ -82,10 +82,12 @@ export  struct YearPage {
                 Row() {
                   Text((item.getMonth() + 1).toString())
                     .fontSize(15)
+                    .fontColor(this.currentMonth == index+1?'#0091FF':Color.Black)
                   Text('月')
                     .fontSize(8)
                     .height(20)
                     .baselineOffset(10)
+                    .fontColor(this.currentMonth == index+1?'#0091FF':Color.Black)
                 }
                 CJCalendarYear({ currMonth: item })
                  // .sharedTransition((item.getMonth()+1).toString(),{ duration: 200, curve: Curve.Friction})

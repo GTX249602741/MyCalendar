@@ -3,6 +3,7 @@ import { ToDo } from '../model/ToDo'
 import relationalStore from '@ohos.data.relationalStore'
 import dbUtil from '../Util/DbUtil'
 import observer from '@ohos.telephony.observer'
+import thermal from '@ohos.thermal'
 
 @Component
 export struct Todo {
@@ -51,10 +52,11 @@ export struct Todo {
  // @State toDoArray:ToDo[] = [{desc:'待办',flag:this.flag,scheduleModelArray:this.scheduleModelArray},{desc:'完成',flag:this.flag2,scheduleModelArray:this.ArrayFinish},{desc:'过期',flag:this.flag3,scheduleModelArray:this.ArrayOutDated}]
 
 
- /** async getScheduleList(){
+ async getScheduleList(){
     this.scheduleModelArray = []
     let predicates = new relationalStore.RdbPredicates("DATE");
     predicates.isNotNull("Title");
+    predicates.equalTo('IsFinish',0)
     let array = await dbUtil.queryForList(predicates, Const)
     for (let i of array) {
       if (i.StartYear <= this.currentYear && i.EndYear >= this.currentYear) {
@@ -79,9 +81,8 @@ export struct Todo {
       }
     }
     if(this.scheduleModelArray.length!=0){
-     // this.hasCalendar = true
+      this.hasCalendar = true
     }
-    console.log('test4',1)
   }
 
   async getScheduleFinishList(){
@@ -92,7 +93,6 @@ export struct Todo {
     for(let i of array){
     this.ArrayFinish.push(i)
     }
-    console.log('test4',5)
   }
   async getScheduleOutDatedList(){
     this.ArrayOutDated = []
@@ -109,33 +109,117 @@ export struct Todo {
         }
 
       }
-    console.log('test4',3)
     }
-**/
-  aboutToAppear(){
-
-  }
 
 
-
-  @Builder CustomBuilder(item:ScheduleModel){
-    Row(){
+  @Builder CustomBuilder(item:ScheduleModel) {
+    Row() {
       Image($r('app.media.ic_public_ok_filled'))
-        .size({height:20,width:20})
-        .margin({right:10,left:10})
-        .onClick(()=>{
-          let predicates = new relationalStore.RdbPredicates("DATE");
-          predicates.equalTo('Title',item.Title);
-          dbUtil.delete(predicates)
+        .size({ height: 20, width: 20 })
+        .margin({ right: 10, left: 15 })
+        .onClick(() => {
+          AlertDialog.show(
+            {
+              message: '是否已完成？',
+              autoCancel: true,
+              alignment: DialogAlignment.Center,
+              gridCount: 3,
+              primaryButton: {
+                value: '否',
+                action: () => {
+                }
+              },
+              secondaryButton: {
+                value: '是',
+                action: async () => {
+                  item.IsFinish = 1
+                  let num = await dbUtil.update('DATE', item, Const, item.Title)
+                  this.getScheduleList()
+                  this.getScheduleFinishList()
+                  this.getScheduleOutDatedList()
+
+                }
+              },
+              cancel: () => {
+                console.info('Closed callbacks')
+              }
+            })
         })
       Image($r('app.media.ic_public_delete'))
-        .size({height:20,width:20})
-        .margin({right:10})
-    }
+        .size({ height: 20, width: 20 })
+        .margin({ right: 10 })
+        .onClick(async () => {
+          AlertDialog.show(
+            {
+              message: '是否确认删除？',
+              autoCancel: true,
+              alignment: DialogAlignment.Center,
+              gridCount: 3,
+              primaryButton: {
+                value: '否',
+                action: () => {
+                  console.info('Callback when the first button is clicked')
+                }
+              },
+              secondaryButton: {
+                value: '是',
+                action: async () => {
+                  let predicates = new relationalStore.RdbPredicates("DATE");
+                  predicates.equalTo('Title', item.Title);
+                  let num = await dbUtil.delete(predicates)
+                  this.getScheduleList()
+                  this.getScheduleFinishList()
+                  this.getScheduleOutDatedList()
+                }
 
+              },
+              cancel: () => {
+                console.info('Closed callbacks')
+              }
+            })
+        })
+    }
   }
 
-  build(){
+  @Builder CustomBuilder2(item:ScheduleModel) {
+    Row() {
+      Image($r('app.media.ic_public_delete'))
+        .size({ height: 20, width: 20 })
+        .margin({ left: 15 })
+        .onClick(async () => {
+          AlertDialog.show(
+            {
+              message: '是否确认删除？',
+              autoCancel: true,
+              alignment: DialogAlignment.Center,
+              gridCount: 3,
+              primaryButton: {
+                value: '否',
+                action: () => {
+                  console.info('Callback when the first button is clicked')
+                }
+              },
+              secondaryButton: {
+                value: '是',
+                action: async () => {
+                  let predicates = new relationalStore.RdbPredicates("DATE");
+                  predicates.equalTo('Title', item.Title);
+                  let num = await dbUtil.delete(predicates)
+                  this.getScheduleList()
+                  this.getScheduleFinishList()
+                  this.getScheduleOutDatedList()
+                }
+
+              },
+              cancel: () => {
+                console.info('Closed callbacks')
+              }
+            })
+        })
+    }
+  }
+
+ build(){
     Scroll(this.scroller){
       Column(){
         Row(){
@@ -183,10 +267,12 @@ export struct Todo {
               .height('7%')
               .width('95%')
             }
-            .swipeAction({end:this.CustomBuilder()})
+            .swipeAction({end:this.CustomBuilder(item)})
           })
         }
         .visibility(this.flag == true?Visibility.Visible:Visibility.None)
+
+
         Row(){
           Text('已完成')
             .fontSize(15)
@@ -197,6 +283,7 @@ export struct Todo {
             .rotate({angle:this.rotateAngle2})
             .onClick(()=>{
               this.rotateAngle2 = this.rotateAngle2+180
+              this.flag2 = !this.flag2
             })
             .animation({
               duration: 500,
@@ -209,6 +296,88 @@ export struct Todo {
         .justifyContent(FlexAlign.Start)
         .width('95%')
         .height('7%')
+
+
+        List(){
+          ForEach(this.ArrayFinish,(item:ScheduleModel)=>{
+            ListItem(){
+              Row() {
+                Divider()
+                  .vertical(true)
+                  .color('#0091FF')
+                  .height('70%')
+                  .strokeWidth(4)
+                  .lineCap(LineCapStyle.Round)
+                  .margin({ left: 10, right: 10 })
+                Text(item.Title)
+                  .fontSize(25)
+
+              }
+              .borderRadius(15)
+              .builder()
+              .justifyContent(FlexAlign.Start)
+              .height('7%')
+              .width('95%')
+            }
+            .swipeAction({end:this.CustomBuilder2(item)})
+          })
+        }
+        .visibility(this.flag2 == true?Visibility.Visible:Visibility.None)
+
+        Row(){
+          Text('已过期')
+            .fontSize(15)
+            .margin({left:10})
+          Blank()
+          Image($r('app.media.ic_public_arrow_up_0'))
+            .size({height:15,width:15})
+            .rotate({angle:this.rotateAngle2})
+            .onClick(()=>{
+              this.rotateAngle2 = this.rotateAngle2+180
+              this.flag3 = !this.flag3
+            })
+            .animation({
+              duration: 500,
+              curve: Curve.Friction,
+              delay: 0,
+              iterations: 1, // 设置-1表示动画无限循环
+              playMode: PlayMode.Normal
+            })
+        }
+        .justifyContent(FlexAlign.Start)
+        .width('95%')
+        .height('7%')
+
+        List(){
+          ForEach(this.ArrayOutDated,(item:ScheduleModel)=>{
+            ListItem(){
+              Row() {
+                Divider()
+                  .vertical(true)
+                  .color('#0091FF')
+                  .height('70%')
+                  .strokeWidth(4)
+                  .lineCap(LineCapStyle.Round)
+                  .margin({ left: 10, right: 10 })
+                Text(){
+                  Span(item.Title)
+                    .fontSize(25)
+                    .fontColor(Color.Red)
+                    .decoration({type:TextDecorationType.LineThrough,color:Color.Red})
+                }
+
+
+              }
+              .borderRadius(15)
+              .builder()
+              .justifyContent(FlexAlign.Start)
+              .height('7%')
+              .width('95%')
+            }
+            .swipeAction({end:this.CustomBuilder2(item)})
+          })
+        }
+        .visibility(this.flag3 == true?Visibility.Visible:Visibility.None)
       }
       .width('100%')
       .height('100%')
@@ -217,67 +386,4 @@ export struct Todo {
     .height('100%')
    }
 }
- /** build() {
-    List({space:10}){
-      ForEach(this.toDoArray,(item:ToDo)=>{
-        ListItemGroup({ header:this.itemHead(item.desc,item.flag)}){
-          ForEach(item.scheduleModelArray, (item:ScheduleModel) => {
-            ListItem() {
-              scheduleArray({item:item})
-            }
-            .swipeAction({end:this.CustomBuilder()})
 
-          })
-        }
-        .visibility(item.flag == true?Visibility.Visible:Visibility.None)
-        .width('100%')
-        .height('100%')
-      }
-      )
-    }
-    .chainAnimation(true)
-    .alignListItem(ListItemAlign.Center)
-    .width('100%')
-    .height('100%')
-
-  }
-}
-
-
-@Component
-struct scheduleArray{
-
-  @ObjectLink item:ScheduleModel
-
-build() {
-
-  Row() {
-    Divider()
-      .vertical(true)
-      .color('#0091FF')
-      .height('70%')
-      .strokeWidth(4)
-      .lineCap(LineCapStyle.Round)
-      .margin({ left: 10, right: 10 })
-    Text(this.item.Title)
-      .fontSize(25)
-
-  }
-  .borderRadius(15)
-  .builder()
-  .justifyContent(FlexAlign.Start)
-  .height('7%')
-  .width('95%')
-}
-
-  @Styles builder(){
-    .backgroundColor('rgba(243, 243, 243, 0.6)')
-    .backdropBlur(20)
-    .shadow({
-      color: 'rgba(0, 0, 0, 0.12)',
-      radius: 30,
-      offsetX: 1,
-      offsetY: 1})}
-
-}
-  **/
