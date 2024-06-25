@@ -222,6 +222,7 @@ struct ItemCell {
       this.cjCellStatus.fontColor = this.cjCellStyle.disabledFontColor
     } else if (this.cjDataItem.equalDay(this.today)) {
       this.cjCellStatus.fontColor = this.cjCellStyle.todayFontColor
+      this.cjCellStatus.backgroundColor = this.cjCellStyle.todayFontColor
     }
 
     if (this.optMode == OptMode.NORMAL || this.optMode == OptMode.SINGLE) { // 正常
@@ -234,6 +235,7 @@ struct ItemCell {
         // this.cjCellStatus.selected = false
         if (this.cjDataItem.equalDay(this.today)) {
           this.cjCellStatus.fontColor = this.cjCellStyle.todayFontColor
+          this.cjCellStatus.backgroundColor = this.cjCellStyle.todayFontColor
         } else {
           if (!this.cjDataItem.isPre && !this.cjDataItem.isNext) {
             this.cjCellStatus.fontColor = this.cjCellStyle.fontColor
@@ -478,6 +480,7 @@ export struct CJCalendarYear {
 
   @Builder
   BuildCellBackground() {
+
     if (this.optMode == OptMode.NORMAL ||
       this.optMode == OptMode.MULTIPLE ||
       this.optMode == OptMode.SINGLE) {

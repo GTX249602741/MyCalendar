@@ -12,15 +12,15 @@ export  struct MyOneDayPage {
 
   date:Date = new Date()
 
-  @State currentYear:number = this.date.getFullYear()
+  @Link currentYear:number
 
-  @State currentMonth:number = this.date.getMonth()+1
+  @Link currentMonth:number
 
-  @State currentDate:number = this.date.getDate()
+  @Link currentDate:number
 
-  @State currentHour:number = this.date.getHours()
+  @Link currentHour:number
 
-  @State currentMinute:number = this.date.getMinutes()
+  @Link currentMinute:number
 
   @Link scheduleModelArray:Array<ScheduleModel>
 
@@ -75,8 +75,7 @@ export  struct MyOneDayPage {
         Refresh({refreshing:$$this.refreshing})
           .onRefreshing(()=>{
             setTimeout(() => {
-              let date = new Date()
-              getScheduleList(date.getFullYear(),date.getMonth()+1,date.getDate(),date.getHours(),date.getMinutes()).then((result:ScheduleModel[])=>{
+              getScheduleList(this.currentYear,this.currentMonth,this.currentDate,this.currentHour,this.currentMinute).then((result:ScheduleModel[])=>{
                 this.scheduleModelArray = result
               }).catch((err)=>{
                 console.log(err)

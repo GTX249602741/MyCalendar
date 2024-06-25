@@ -90,84 +90,21 @@ export async function getScheduleList(currentYear:number,currentMonth:number,cur
   for (let i of array) {
     if (i.StartYear <= currentYear && i.EndYear >= currentYear) {
       if (i.StartMonth ==currentMonth && i.EndMonth == currentMonth) {
-        if (i.StartDate < currentDate && i.EndDate > currentDate) {
+        if (i.StartDate <= currentDate && i.EndDate >= currentDate) {
           scheduleModelArray.push(i)
-
         }
-        if (i.StartDate == currentDate && i.EndDate != currentDate) {
-          if (currentHour>i.HourStart) {
-            scheduleModelArray.push(i)
-          }
-          if (currentHour==i.HourStart) {
-            if (currentMinute>=i.MinuteStart) {
-              scheduleModelArray.push(i)
-            }
-          }
-        }
-        if (i.StartDate != currentDate && i.EndDate == currentDate) {
-          if (currentHour<i.HourEnd) {
-            scheduleModelArray.push(i)
-          }
-          if (currentHour==i.HourEnd) {
-            if (currentMinute<=i.MinuteEnd) {
-              scheduleModelArray.push(i)
-            }
-          }
-        }
-        if (i.StartDate == currentDate && i.EndDate == currentDate) {
-          if (currentHour>i.HourStart&&currentHour<i.HourEnd) {
-            scheduleModelArray.push(i)
-          }
-          if (currentHour==i.HourStart&&currentHour!=i.HourEnd) {
-            if (currentMinute>=i.MinuteStart) {
-              scheduleModelArray.push(i)
-            }
-          }
-          if (currentHour!=i.HourStart&&currentHour==i.HourEnd) {
-            if (currentMinute<=i.MinuteEnd) {
-              scheduleModelArray.push(i)
-            }
-          }
-          if (currentHour==i.HourStart&&currentHour==i.HourEnd) {
-            if (currentMinute<=i.MinuteEnd&&currentMinute>=i.MinuteStart) {
-              scheduleModelArray.push(i)
-            }
-          }
-        }
-
       }
       if (i.StartMonth == currentMonth && i.EndMonth != currentMonth) {
-        if (i.StartDate <  currentDate ) {
+        if (i.StartDate <=  currentDate ) {
           scheduleModelArray.push(i)
         }
-        if (i.StartDate == currentDate ) {
-          if (i.HourStart<currentHour) {
-            scheduleModelArray.push(i)
-          }
-          if (i.HourStart == currentHour) {
-            if (i.MinuteStart<=currentMinute) {
-              scheduleModelArray.push(i)
-            }
-          }
-        }
-
       }
       if (i.StartMonth < currentMonth && i.EndMonth > currentMonth) {
         scheduleModelArray.push(i)
       }
       if (i.EndMonth == currentMonth && i.StartMonth != currentMonth) {
-        if (i.EndDate > currentDate) {
+        if (i.EndDate >= currentDate) {
           scheduleModelArray.push(i)
-        }
-        if (i.EndDate == currentDate) {
-          if (i.HourEnd > currentHour) {
-            scheduleModelArray.push(i)
-          }
-          if (i.HourEnd == currentHour) {
-            if (i.MinuteEnd >= currentMinute) {
-              scheduleModelArray.push(i)
-            }
-          }
         }
       }
     }
@@ -226,6 +163,7 @@ export struct Index {
       Text(name)
         .fontSize(10)
         .margin({top:5})
+        .fontColor(this.currentIndex === index?'#0091FF':Color.Black)
     }.width('100%')
     .height('100%')
     .backgroundColor(Color.Transparent)
@@ -242,13 +180,19 @@ export struct Index {
 
     let date:Date = new Date()
 
+    this.currentDate = date.getDate()
+
+    this.currentHour = date.getHours()
+
+    this.currentMinute = date.getMinutes()
+
     getToDoList().then((result:ScheduleModel[])=>{
       this.todoList = result
     }).catch((err)=>{
       console.log(err)
     })
 
-    getScheduleList(date.getFullYear(),date.getMonth()+1,date.getDate(),date.getHours(),date.getMinutes()).then((result:ScheduleModel[])=>{
+    getScheduleList(this.currentYear,this.currentMonth,this.currentDate,this.currentHour,this.currentMinute).then((result:ScheduleModel[])=>{
       this.scheduleModelArray = result
     }).catch((err)=>{
       console.log(err)
@@ -277,7 +221,7 @@ export struct Index {
         }.tabBar(this.TabBuilder(0,'日程',$r('app.media.ic_public_calendar'),$r('app.media.ic_public_calendar_filled')))
 
         TabContent(){
-          MyOneDayPage({scheduleModelArray:$scheduleModelArray})
+          MyOneDayPage({scheduleModelArray:$scheduleModelArray,currentYear:$currentYear,currentMonth:$currentMonth,currentDate:$currentDate,currentHour:$currentHour,currentMinute:$currentMinute})
 
         }.tabBar(this.TabBuilder(1,'我的一天',$r('app.media.rili'),$r('app.media.rili_fill')))
 

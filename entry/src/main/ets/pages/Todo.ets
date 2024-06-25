@@ -7,6 +7,7 @@ import {getScheduleList} from './Index'
 import {getScheduleFinishList} from './Index'
 import {getScheduleOutDatedList} from './Index'
 import {getToDoList} from './Index'
+import router from '@ohos.router'
 @Component
 export struct Todo {
 
@@ -239,10 +240,6 @@ export struct Todo {
           Image($r('app.media.ic_public_arrow_up_0'))
             .size({height:15,width:15})
             .rotate({angle:this.rotateAngle})
-            .onClick(()=>{
-              this.rotateAngle = this.rotateAngle+180
-              this.flag = !this.flag
-            })
             .animation({
               duration: 500,
               curve: Curve.Friction,
@@ -251,6 +248,10 @@ export struct Todo {
               playMode: PlayMode.Normal
             })
         }
+        .onClick(()=>{
+          this.rotateAngle = this.rotateAngle+180
+          this.flag = !this.flag
+        })
         .justifyContent(FlexAlign.Start)
         .width('95%')
         .height('7%')
@@ -261,6 +262,9 @@ export struct Todo {
               todoItem({item:item})
             }
             .swipeAction({end:this.CustomBuilder(item)})
+            .onClick(()=>{
+              router.pushUrl({url:'pages/ContentPage',params:{item:item}},router.RouterMode.Single)
+            })
           })
         }
         .alignListItem(ListItemAlign.Center)
@@ -276,10 +280,6 @@ export struct Todo {
           Image($r('app.media.ic_public_arrow_up_0'))
             .size({height:15,width:15})
             .rotate({angle:this.rotateAngle2})
-            .onClick(()=>{
-              this.rotateAngle2 = this.rotateAngle2+180
-              this.flag2 = !this.flag2
-            })
             .animation({
               duration: 500,
               curve: Curve.Friction,
@@ -288,6 +288,10 @@ export struct Todo {
               playMode: PlayMode.Normal
             })
         }
+        .onClick(()=>{
+          this.rotateAngle2 = this.rotateAngle2+180
+          this.flag2 = !this.flag2
+        })
         .justifyContent(FlexAlign.Start)
         .width('95%')
         .height('7%')
@@ -299,6 +303,9 @@ export struct Todo {
               todoItem({item:item})
             }
             .swipeAction({end:this.CustomBuilder2(item)})
+            .onClick(()=>{
+              router.pushUrl({url:'pages/ContentPage',params:{item:item}},router.RouterMode.Single)
+            })
           })
         }
         .alignListItem(ListItemAlign.Center)
@@ -314,10 +321,6 @@ export struct Todo {
           Image($r('app.media.ic_public_arrow_up_0'))
             .size({height:15,width:15})
             .rotate({angle:this.rotateAngle3})
-            .onClick(()=>{
-              this.rotateAngle3 = this.rotateAngle3+180
-              this.flag3 = !this.flag3
-            })
             .animation({
               duration: 500,
               curve: Curve.Friction,
@@ -326,6 +329,10 @@ export struct Todo {
               playMode: PlayMode.Normal
             })
         }
+        .onClick(()=>{
+          this.rotateAngle3 = this.rotateAngle3+180
+          this.flag3 = !this.flag3
+        })
         .justifyContent(FlexAlign.Start)
         .width('95%')
         .height('7%')
@@ -336,6 +343,9 @@ export struct Todo {
               todoItem({item:item})
             }
             .swipeAction({end:this.CustomBuilder2(item)})
+            .onClick(()=>{
+              router.pushUrl({url:'pages/ContentPage',params:{item:item}},router.RouterMode.Single)
+            })
           })
         }
         .alignListItem(ListItemAlign.Center)

@@ -38,25 +38,25 @@ struct ContentPage {
 
   @State selectedEndMinute:number = this.item.MinuteEnd
 
-  @State selectedYear:number = this.date.getFullYear()
+  @State selectedYear:number = this.item.StartYear
 
-  @State selectedMonth:number = this.date.getMonth()+1
+  @State selectedMonth:number = this.item.StartMonth
 
-  @State selectedDate:number = this.date.getDate()
+  @State selectedDate:number = this.item.StartDate
 
-  @State selectedHour:number = this.date.getHours()
+  @State selectedHour:number = this.item.HourStart
 
-  @State selectedMinute:number = this.date.getMinutes()
+  @State selectedMinute:number = this.item.MinuteStart
 
-  @State selectedYear2:number = this.date.getFullYear()
+  @State selectedYear2:number = this.item.EndYear
 
-  @State selectedMonth2:number = this.date.getMonth()+1
+  @State selectedMonth2:number = this.item.EndMonth
 
-  @State selectedDate2:number = this.date.getDate()
+  @State selectedDate2:number = this.item.EndDate
 
-  @State selectedHour2:number = this.date.getHours()
+  @State selectedHour2:number = this.item.HourEnd
 
-  @State selectedMinute2:number = this.date.getMinutes()
+  @State selectedMinute2:number = this.item.MinuteEnd
 
   @State fullDayFlag:boolean = this.item.WholeDay == 1?true:false
 
@@ -147,14 +147,6 @@ struct ContentPage {
       .margin({top:10})
       .width('95%')
 
-      Row(){
-        Text('标题')
-          .fontSize(15)
-      }
-      .width('100%')
-      .justifyContent(FlexAlign.Center)
-      .margin({top:50})
-
 
       Row(){
         Text(this.title)
@@ -162,6 +154,7 @@ struct ContentPage {
       }
       .width('100%')
       .justifyContent(FlexAlign.Center)
+      .margin({top:60})
 
 
 

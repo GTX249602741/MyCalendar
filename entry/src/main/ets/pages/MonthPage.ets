@@ -125,6 +125,13 @@ export struct MonthPage {
           .width(230)
           .height(50)
           .fontSize(15)
+        Blank()
+        Image($r('app.media.ic_public_add_norm'))
+          .size({width:20,height:20})
+          .margin({right:10})
+          .onClick(()=>{
+            router.pushUrl({url:'pages/CreateSchedulePage'},router.RouterMode.Single)
+          })
       }
       .width('100%')
       .height('7%')

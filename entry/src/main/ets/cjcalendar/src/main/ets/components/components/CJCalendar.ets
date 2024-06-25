@@ -5,6 +5,7 @@ import TimeConversionTool from '../../utils/TimeConversionTool'
 import { CJDateItem } from './CJDateItem'
 import { ColorUtil } from '../../utils/ColorUtil'
 import { Solar } from 'lunar'
+import thermal from '@ohos.thermal'
 //import { ifaa } from '@kit.OnlineAuthenticationKit'
 
 export function getLunarDesc(cjDataItem: CJDateItem, showJieQi: boolean | undefined, showJieRi: boolean | undefined): string {
@@ -222,6 +223,7 @@ struct ItemCell {
       this.cjCellStatus.fontColor = this.cjCellStyle.disabledFontColor
     } else if (this.cjDataItem.equalDay(this.today)) {
       this.cjCellStatus.fontColor = this.cjCellStyle.todayFontColor
+      this.cjCellStatus.backgroundColor = this.cjCellStyle.todayFontColor
     }
 
     if (this.optMode == OptMode.NORMAL || this.optMode == OptMode.SINGLE) { // 正常

@@ -110,8 +110,9 @@ struct CreateSchedulePage {
   })
 
   onBackPress(){
-    router.pushUrl({url:'pages/Index'},router.RouterMode.Single)
+    //router.back()
   }
+
   build() {
     Column(){
       Row(){
