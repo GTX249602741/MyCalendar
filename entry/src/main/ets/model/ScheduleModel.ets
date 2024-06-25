@@ -36,7 +36,7 @@ export  const Const:ColumnInfo[] = [
   {name:'Title',columnName:'Title',type:ColumnType.STRING},
   {name:'content',columnName:'Content',type:ColumnType.STRING}
 ]
-
+@Observed
 export class ScheduleModel{
 
   id:number

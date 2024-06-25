@@ -42,14 +42,14 @@ export class DbUtil {
     })
   }
 
-  update(tableName: string, obj: ScheduleModel, columns: ColumnInfo[],TitleName:string): Promise<number> {
+  update(tableName:string, obj: ScheduleModel, columns: ColumnInfo[],id:number): Promise<number> {
     return new Promise((resolve, reject) => {
       // 1.构建更新数据
       let value = this.buildValueBucket(obj, columns)
 
       let  predicates = new relationalStore.RdbPredicates(tableName);
 
-      predicates.equalTo('Title',TitleName)
+      predicates.equalTo('ID',id)
       // 2.更新
       this.rdbStore.update( value, predicates,(err, id) => {
         if (err) {

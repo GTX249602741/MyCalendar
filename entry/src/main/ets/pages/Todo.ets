@@ -1,10 +1,12 @@
 import { Const, ScheduleModel } from '../model/ScheduleModel'
-import { ToDo } from '../model/ToDo'
 import relationalStore from '@ohos.data.relationalStore'
 import dbUtil from '../Util/DbUtil'
 import observer from '@ohos.telephony.observer'
 import thermal from '@ohos.thermal'
-
+import {getScheduleList} from './Index'
+import {getScheduleFinishList} from './Index'
+import {getScheduleOutDatedList} from './Index'
+import {getToDoList} from './Index'
 @Component
 export struct Todo {
 
@@ -15,6 +17,10 @@ export struct Todo {
   @State currentMonth:number = this.date.getMonth()+1
 
   @State currentDate:number = this.date.getDate()
+
+  @State currentHour:number = this.date.getHours()
+
+  @State currentMinute:number = this.date.getMinutes()
 
   @State rotateAngle:number = 0
 
@@ -28,13 +34,13 @@ export struct Todo {
 
   @State flag3:boolean = true
 
-  @Prop hasCalendar:boolean
-
-  @Link scheduleModelArray:ScheduleModel[]
-
   @Link ArrayFinish:ScheduleModel[]
 
   @Link ArrayOutDated:ScheduleModel[]
+
+  @State refreshing:boolean = false
+
+  @Link todoList:ScheduleModel[]
 
   scroller:Scroller = new Scroller()
 
@@ -46,76 +52,6 @@ export struct Todo {
       radius: 30,
       offsetX: 1,
       offsetY: 1})}
-
-
-
- // @State toDoArray:ToDo[] = [{desc:'待办',flag:this.flag,scheduleModelArray:this.scheduleModelArray},{desc:'完成',flag:this.flag2,scheduleModelArray:this.ArrayFinish},{desc:'过期',flag:this.flag3,scheduleModelArray:this.ArrayOutDated}]
-
-
- async getScheduleList(){
-    this.scheduleModelArray = []
-    let predicates = new relationalStore.RdbPredicates("DATE");
-    predicates.isNotNull("Title");
-    predicates.equalTo('IsFinish',0)
-    let array = await dbUtil.queryForList(predicates, Const)
-    for (let i of array) {
-      if (i.StartYear <= this.currentYear && i.EndYear >= this.currentYear) {
-        if (i.StartMonth == this.currentMonth && i.EndMonth == this.currentMonth) {
-          if (i.StartDate <= this.currentDate && i.EndDate >= this.currentDate) {
-            this.scheduleModelArray.push(i)
-          }
-        }
-        if (i.StartMonth == this.currentMonth && i.EndMonth != this.currentMonth) {
-          if (i.StartDate <= this.currentDate ) {
-            this.scheduleModelArray.push(i)
-          }
-        }
-        if (i.StartMonth < this.currentMonth && i.EndMonth > this.currentMonth) {
-          this.scheduleModelArray.push(i)
-        }
-        if (i.EndMonth == this.currentMonth && i.StartMonth != this.currentMonth) {
-          if ( i.EndDate >= this.currentDate) {
-            this.scheduleModelArray.push(i)
-          }
-        }
-      }
-    }
-    if(this.scheduleModelArray.length!=0){
-      this.hasCalendar = true
-    }
-  }
-
-  async getScheduleFinishList(){
-    this.ArrayFinish = []
-    let predicates = new relationalStore.RdbPredicates("DATE");
-    predicates.equalTo('IsFinish',1);
-    let array = await dbUtil.queryForList(predicates, Const)
-    for(let i of array){
-    this.ArrayFinish.push(i)
-    }
-  }
-  async getScheduleOutDatedList(){
-    this.ArrayOutDated = []
-    let predicates = new relationalStore.RdbPredicates("DATE");
-    predicates.equalTo('IsFinish',0)
-    let array = await dbUtil.queryForList(predicates, Const)
-    for(let i of array){
-      if (this.currentYear>i.EndYear) {
-        this.ArrayOutDated.push(i)
-        }
-      if(this.currentYear = i.EndYear){
-        if (this.currentMonth > i.EndMonth) {
-          this.ArrayOutDated.push(i)
-        }
-        if (this.currentMonth = i.EndMonth) {
-          if (this.currentDate > i.EndDate) {
-            this.ArrayOutDated.push(i)
-          }
-        }
-      }
-
-      }
-    }
 
 
   @Builder CustomBuilder(item:ScheduleModel) {
@@ -139,11 +75,25 @@ export struct Todo {
                 value: '是',
                 action: async () => {
                   item.IsFinish = 1
-                  let num = await dbUtil.update('DATE', item, Const, item.Title)
-                  this.getScheduleList()
-                  this.getScheduleFinishList()
-                  this.getScheduleOutDatedList()
+                  let num = await dbUtil.update('DATE', item, Const, item.id)
 
+                  getToDoList().then((result:ScheduleModel[])=>{
+                    this.todoList = result
+                  }).catch((err)=>{
+                    console.log(err)
+                  })
+
+                  getScheduleOutDatedList().then((result:ScheduleModel[])=>{
+                    this.ArrayOutDated = result
+                  }).catch((err)=>{
+                    console.log(err)
+                  })
+
+                  getScheduleFinishList().then((result:ScheduleModel[])=>{
+                    this.ArrayFinish = result
+                  }).catch((err)=>{
+                    console.log(err)
+                  })
                 }
               },
               cancel: () => {
@@ -171,11 +121,26 @@ export struct Todo {
                 value: '是',
                 action: async () => {
                   let predicates = new relationalStore.RdbPredicates("DATE");
-                  predicates.equalTo('Title', item.Title);
+                  predicates.equalTo('ID', item.id);
                   let num = await dbUtil.delete(predicates)
-                  this.getScheduleList()
-                  this.getScheduleFinishList()
-                  this.getScheduleOutDatedList()
+
+                  getToDoList().then((result:ScheduleModel[])=>{
+                    this.todoList = result
+                  }).catch((err)=>{
+                    console.log(err)
+                  })
+
+                  getScheduleOutDatedList().then((result:ScheduleModel[])=>{
+                    this.ArrayOutDated = result
+                  }).catch((err)=>{
+                    console.log(err)
+                  })
+
+                  getScheduleFinishList().then((result:ScheduleModel[])=>{
+                    this.ArrayFinish = result
+                  }).catch((err)=>{
+                    console.log(err)
+                  })
                 }
 
               },
@@ -209,11 +174,26 @@ export struct Todo {
                 value: '是',
                 action: async () => {
                   let predicates = new relationalStore.RdbPredicates("DATE");
-                  predicates.equalTo('Title', item.Title);
+                  predicates.equalTo('ID', item.id);
                   let num = await dbUtil.delete(predicates)
-                  this.getScheduleList()
-                  this.getScheduleFinishList()
-                  this.getScheduleOutDatedList()
+
+                  getToDoList().then((result:ScheduleModel[])=>{
+                    this.todoList = result
+                  }).catch((err)=>{
+                    console.log(err)
+                  })
+
+                  getScheduleOutDatedList().then((result:ScheduleModel[])=>{
+                    this.ArrayOutDated = result
+                  }).catch((err)=>{
+                    console.log(err)
+                  })
+
+                  getScheduleFinishList().then((result:ScheduleModel[])=>{
+                    this.ArrayFinish = result
+                  }).catch((err)=>{
+                    console.log(err)
+                  })
                 }
 
               },
@@ -228,6 +208,29 @@ export struct Todo {
  build(){
     Scroll(this.scroller){
       Column(){
+        Refresh({refreshing:$$this.refreshing})
+        .onRefreshing(()=>{
+          setTimeout(() => {
+            getToDoList().then((result:ScheduleModel[])=>{
+              this.todoList = result
+            }).catch((err)=>{
+              console.log(err)
+            })
+
+            getScheduleOutDatedList().then((result:ScheduleModel[])=>{
+              this.ArrayOutDated = result
+            }).catch((err)=>{
+              console.log(err)
+            })
+
+            getScheduleFinishList().then((result:ScheduleModel[])=>{
+              this.ArrayFinish = result
+            }).catch((err)=>{
+              console.log(err)
+            })
+            this.refreshing = false
+          }, 500)
+        })
         Row(){
           Text('待办')
             .fontSize(15)
@@ -253,25 +256,9 @@ export struct Todo {
         .height('7%')
 
         List(){
-          ForEach(this.scheduleModelArray,(item:ScheduleModel)=>{
+          ForEach(this.todoList,(item:ScheduleModel)=>{
             ListItem(){
-              Row() {
-                Divider()
-                  .vertical(true)
-                  .color('#0091FF')
-                  .height('70%')
-                  .strokeWidth(4)
-                  .lineCap(LineCapStyle.Round)
-                  .margin({ left: 10, right: 10 })
-                Text(item.Title)
-                  .fontSize(25)
-
-              }
-              .borderRadius(15)
-              .builder()
-              .justifyContent(FlexAlign.Start)
-              .height('7%')
-              .width('95%')
+              todoItem({item:item})
             }
             .swipeAction({end:this.CustomBuilder(item)})
           })
@@ -309,23 +296,7 @@ export struct Todo {
         List(){
           ForEach(this.ArrayFinish,(item:ScheduleModel)=>{
             ListItem(){
-              Row() {
-                Divider()
-                  .vertical(true)
-                  .color('#0091FF')
-                  .height('70%')
-                  .strokeWidth(4)
-                  .lineCap(LineCapStyle.Round)
-                  .margin({ left: 10, right: 10 })
-                Text(item.Title)
-                  .fontSize(25)
-
-              }
-              .borderRadius(15)
-              .builder()
-              .justifyContent(FlexAlign.Start)
-              .height('7%')
-              .width('95%')
+              todoItem({item:item})
             }
             .swipeAction({end:this.CustomBuilder2(item)})
           })
@@ -342,9 +313,9 @@ export struct Todo {
           Blank()
           Image($r('app.media.ic_public_arrow_up_0'))
             .size({height:15,width:15})
-            .rotate({angle:this.rotateAngle2})
+            .rotate({angle:this.rotateAngle3})
             .onClick(()=>{
-              this.rotateAngle2 = this.rotateAngle2+180
+              this.rotateAngle3 = this.rotateAngle3+180
               this.flag3 = !this.flag3
             })
             .animation({
@@ -362,28 +333,7 @@ export struct Todo {
         List(){
           ForEach(this.ArrayOutDated,(item:ScheduleModel)=>{
             ListItem(){
-              Row() {
-                Divider()
-                  .vertical(true)
-                  .color('#0091FF')
-                  .height('70%')
-                  .strokeWidth(4)
-                  .lineCap(LineCapStyle.Round)
-                  .margin({ left: 10, right: 10 })
-                Text(){
-                  Span(item.Title)
-                    .fontSize(25)
-                    .fontColor(Color.Red)
-                    .decoration({type:TextDecorationType.LineThrough,color:Color.Red})
-                }
-
-
-              }
-              .borderRadius(15)
-              .builder()
-              .justifyContent(FlexAlign.Start)
-              .height('7%')
-              .width('95%')
+              todoItem({item:item})
             }
             .swipeAction({end:this.CustomBuilder2(item)})
           })
@@ -399,3 +349,38 @@ export struct Todo {
    }
 }
 
+@Component
+struct todoItem{
+
+  @ObjectLink item:ScheduleModel
+
+  @Styles builder(){
+    .backgroundColor('rgba(243, 243, 243, 0.6)')
+    .backdropBlur(20)
+    .shadow({
+      color: 'rgba(0, 0, 0, 0.12)',
+      radius: 30,
+      offsetX: 1,
+      offsetY: 1})}
+
+
+  build(){
+    Row() {
+      Divider()
+        .vertical(true)
+        .color('#0091FF')
+        .height('70%')
+        .strokeWidth(4)
+        .lineCap(LineCapStyle.Round)
+        .margin({ left: 10, right: 10 })
+      Text(this.item.Title)
+        .fontSize(25)
+
+    }
+    .borderRadius(15)
+    .builder()
+    .justifyContent(FlexAlign.Start)
+    .height('7%')
+    .width('95%')
+  }
+}

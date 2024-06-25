@@ -36,6 +36,26 @@ struct CreateSchedulePage {
 
   @State fullDayFlag:boolean = false
 
+  @State selectedYear:number = this.date.getFullYear()
+
+  @State selectedMonth:number = this.date.getMonth()+1
+
+  @State selectedDate:number = this.date.getDate()
+
+  @State selectedHour:number = this.date.getHours()
+
+  @State selectedMinute:number = this.date.getMinutes()
+
+  @State selectedYear2:number = this.date.getFullYear()
+
+  @State selectedMonth2:number = this.date.getMonth()+1
+
+  @State selectedDate2:number = this.date.getDate()
+
+  @State selectedHour2:number = this.date.getHours()
+
+  @State selectedMinute2:number = this.date.getMinutes()
+
   day:number = this.date.getDay()
 
   @State day2:string = this.getDay(this.day)
@@ -73,14 +93,18 @@ struct CreateSchedulePage {
   }
 
   controller:CustomDialogController = new CustomDialogController({
-    builder:DatePickerDialogPage({selectedYear:$selectedStartYear,selectedMonth:$selectedStartMonth,selectedDate:$selectedStartDate,selectedHour:$selectedStartHour,selectedMinute:$selectedStartMinute,fullDayFlag:$fullDayFlag,day1:$day1}),
+    builder:DatePickerDialogPage({selectedStartYear:$selectedStartYear,selectedStartMonth:$selectedStartMonth,selectedStartDate:$selectedStartDate,selectedStartHour:$selectedStartHour,selectedStartMinute:$selectedStartMinute,
+      selectedEndYear:$selectedEndYear,selectedEndMonth:$selectedEndMonth,selectedEndDate:$selectedEndDate,selectedEndHour:$selectedEndHour,selectedEndMinute:$selectedEndMinute, fullDayFlag:$fullDayFlag,
+      selectedYear:$selectedYear,selectedMonth:$selectedMonth,selectedDate:$selectedDate,selectedHour:$selectedHour,selectedMinute:$selectedMinute,day1:$day1}),
     alignment:DialogAlignment.Bottom,
     offset:{dx:0,dy:-10}
 
   })
 
   controller2:CustomDialogController = new CustomDialogController({
-    builder:DatePickerDialogPage2({selectedYear:$selectedEndYear,selectedMonth:$selectedEndMonth,selectedDate:$selectedEndDate,selectedHour:$selectedEndHour,selectedMinute:$selectedEndMinute,fullDayFlag:$fullDayFlag,day1:$day2}),
+    builder:DatePickerDialogPage2({selectedStartYear:$selectedStartYear,selectedStartMonth:$selectedStartMonth,selectedStartDate:$selectedStartDate,selectedStartHour:$selectedStartHour,selectedStartMinute:$selectedStartMinute,
+      selectedEndYear:$selectedEndYear,selectedEndMonth:$selectedEndMonth,selectedEndDate:$selectedEndDate,selectedEndHour:$selectedEndHour,selectedEndMinute:$selectedEndMinute,fullDayFlag:$fullDayFlag,
+      selectedYear2:$selectedYear2,selectedMonth2:$selectedMonth2,selectedDate2:$selectedDate2,selectedHour2:$selectedHour2,selectedMinute2:$selectedMinute2,day2:$day2}),
     alignment:DialogAlignment.Bottom,
     offset:{dx:0,dy:-10}
   })
@@ -103,7 +127,7 @@ struct CreateSchedulePage {
         Blank()
         Image($r('app.media.ic_public_ok'))
           .size({width:30,height:30})
-          .onClick(()=>{
+          .onClick(async ()=>{
             let scheduleModel = new ScheduleModel()
             scheduleModel.StartYear = this.selectedStartYear
             scheduleModel.StartMonth = this.selectedStartMonth
@@ -113,13 +137,13 @@ struct CreateSchedulePage {
             scheduleModel.EndDate = this.selectedEndDate
             scheduleModel.IsFinish = 0
             if (this.fullDayFlag == false) {
-              scheduleModel.WholeDay = false
+              scheduleModel.WholeDay = 0
               scheduleModel.HourStart = this.selectedStartHour
               scheduleModel.MinuteStart = this.selectedStartMinute
               scheduleModel.HourEnd = this.selectedEndHour
               scheduleModel.MinuteEnd = this.selectedEndMinute
             }else {
-              scheduleModel.WholeDay =
+              scheduleModel.WholeDay = 1
               scheduleModel.HourStart = null
               scheduleModel.MinuteStart = null
               scheduleModel.HourEnd = null
@@ -146,9 +170,8 @@ struct CreateSchedulePage {
               )
             }else {
               scheduleModel.Title = this.title
-              console.log('test5',this.title)
               scheduleModel.content = this.content
-              DbUtil.insert('DATE',scheduleModel,Const)
+              await DbUtil.insert('DATE',scheduleModel,Const)
               router.back()
             }
 

@@ -9,6 +9,7 @@ import dbUtil from '../Util/DbUtil'
 import thermal from '@ohos.thermal';
 import relationalStore from '@ohos.data.relationalStore';
 import { Const } from '../model/ScheduleModel'
+import {getScheduleList} from './Index'
 
 @Entry
 @Component
@@ -24,9 +25,11 @@ export struct MonthPage {
 
   @State currentDate:number = this.date.getDate()
 
-  @State item:CJDateItem[] = []
+  @State currentHour:number = this.date.getHours()
 
-  @State hasCalendar:boolean = false
+  @State currentMinute:number = this.date.getMinutes()
+
+  @State item:CJDateItem[] = []
 
   @State scheduleModelArray:Array<ScheduleModel> = []
 
@@ -52,38 +55,6 @@ export struct MonthPage {
     AppStorage.Set('currentMonth',this.currentMonth)
     console.log('test3',AppStorage.Get('currentYear').toString())
   }
-  async getScheduleList(){
-    this.scheduleModelArray = []
-    let predicates = new relationalStore.RdbPredicates("DATE");
-    predicates.isNotNull("Title");
-    let array = await dbUtil.queryForList(predicates, Const)
-    for (let i of array) {
-      if (i.StartYear <= this.currentYear && i.EndYear >= this.currentYear) {
-        if (i.StartMonth == this.currentMonth && i.EndMonth == this.currentMonth) {
-          if (i.StartDate <= this.currentDate && i.EndDate >= this.currentDate) {
-
-            this.scheduleModelArray.push(i)
-          }
-        }
-        if (i.StartMonth == this.currentMonth && i.EndMonth != this.currentMonth) {
-          if (i.StartDate <= this.currentDate ) {
-            this.scheduleModelArray.push(i)
-          }
-        }
-        if (i.StartMonth < this.currentMonth && i.EndMonth > this.currentMonth) {
-          this.scheduleModelArray.push(i)
-        }
-        if (i.EndMonth == this.currentMonth && i.StartMonth != this.currentMonth) {
-          if (i.EndDate >= this.currentDate) {
-            this.scheduleModelArray.push(i)
-          }
-        }
-      }
-    }
-    if(this.scheduleModelArray.length!=0){
-      this.hasCalendar = true
-    }
-  }
 
   aboutToAppear(): void {
 
@@ -105,11 +76,17 @@ export struct MonthPage {
     }
     this.item[0] = today
 
-    this.getScheduleList()
   }
 
   onPageShow(){
-    this.getScheduleList()
+    getScheduleList(this.currentYear,this.currentMonth,this.currentDate,this.currentHour,this.currentMinute).then((result:ScheduleModel[])=>{
+      this.scheduleModelArray = result
+      console.log('test5','month'+this.scheduleModelArray.length.toString())
+      console.log('test5','MonthTime'+this.currentYear.toString()+this.currentMonth.toString()+this.currentDate.toString()+this.currentHour.toString()+this.currentMinute.toString())
+    }).catch((err)=>{
+      console.log(err)
+    })
+
   }
 
   onBackPress(){
@@ -127,7 +104,11 @@ export struct MonthPage {
         this.currentMonth = item[0].month+1
         this.currentDate = item[0].date
 
-        this.getScheduleList()
+        getScheduleList(this.currentYear,this.currentMonth,this.currentDate,this.currentHour,this.currentMinute).then((result:ScheduleModel[])=>{
+          this.scheduleModelArray = result
+        }).catch((err)=>{
+          console.log(err)
+        })
         //console.log('test4',this.currentYear.toString())
       },optMode:OptMode.SINGLE})
       //.sharedTransition(this.currentMonth.toString(),{ duration: 200, curve: Curve.Friction})
@@ -140,7 +121,7 @@ export struct MonthPage {
           .height(50)
           .margin({left:10})
           .fontSize(15)
-        Text('农历'+(Lunar.fromDate(new Date(this.currentYear,this.currentMonth-1,this.currentDate))).toString())
+        Text('农历'+Lunar.fromDate(new Date(this.currentYear,this.currentMonth-1,this.currentDate)).toString().split('年')[1])
           .width(230)
           .height(50)
           .fontSize(15)
@@ -151,17 +132,17 @@ export struct MonthPage {
 
       Image($r('app.media.ic_public_calendar1'))
         .size({height:100})
-        .visibility(this.hasCalendar == false? Visibility.Visible : Visibility.None)
+        .visibility(this.scheduleModelArray.length == 0? Visibility.Visible : Visibility.None)
         .margin({top:60})
 
       Text('没有日程')
-        .visibility(this.hasCalendar == false? Visibility.Visible : Visibility.None)
+        .visibility(this.scheduleModelArray.length == 0? Visibility.Visible : Visibility.None)
         .fontColor(Color.Gray)
 
       List({space:15,scroller:this.scroller}){
         ForEach(this.scheduleModelArray,(item:ScheduleModel)=>{
           ListItem(){
-            ScheduleItem({item:item,currentDate:$currentDate})
+            ScheduleItem({item:item,currentDate:$currentDate,currentYear:$currentYear,currentMonth:$currentMonth})
           }
           .onClick(()=>{
             router.pushUrl({url:'pages/ContentPage',params:{item:item}},router.RouterMode.Single)
@@ -180,7 +161,11 @@ struct ScheduleItem{
 
   @State show:boolean = false
 
-  item:ScheduleModel
+  @ObjectLink item:ScheduleModel
+
+  @Link currentYear:number
+
+  @Link currentMonth:number
 
   @Link currentDate:number
 
@@ -194,10 +179,80 @@ struct ScheduleItem{
       offsetY: 1})
   }
 
+ /** ItemDesc(item:ScheduleModel,currentDate:number,currentMonth:number,currentYear:number):string{
+    if (currentYear==item.EndYear&&currentYear==item.StartYear) {
+      console.log('test6','111')
+      if (currentMonth==item.StartMonth&&currentMonth==item.EndMonth) {
+        if (currentDate>item.StartDate&&currentDate<item.EndDate) {
+          return '全天'
+        }
+        if (currentDate == item.EndDate&&currentDate == item.StartDate) {
+          return item.HourStart.toString()+':'+(item.MinuteStart<10?'0'+item.MinuteStart.toString():item.MinuteStart.toString()) +'至'+item.HourEnd.toString()+':'+(item.MinuteEnd<10?'0'+item.MinuteEnd.toString():item.MinuteEnd.toString())
+        }
+        if (currentDate == item.EndDate&&currentDate != item.StartDate) {
+          return item.HourEnd.toString()+':'+(item.MinuteEnd<10?'0'+item.MinuteEnd.toString():item.MinuteEnd.toString())+' '+'结束'
+        }
+        if (currentDate != item.EndDate&&currentDate == item.StartDate) {
+          return item.HourStart.toString()+':'+(item.MinuteStart<10?'0'+item.MinuteStart.toString():item.MinuteStart.toString()) +' '+'开始'
+        }
+      }
+      if (currentMonth>item.StartMonth&&item.EndMonth == currentMonth) {
+        if (currentDate == item.EndDate) {
+          return item.HourEnd.toString()+':'+(item.MinuteEnd<10?'0'+item.MinuteEnd.toString():item.MinuteEnd.toString())+' '+'结束'
+        }
+        if (currentDate < item.EndDate) {
+          return '全天'
+        }
+      }
+      if (currentMonth==item.StartMonth&&currentMonth!=item.EndMonth) {
+        console.log('test6','222')
+        if (currentDate>item.StartDate) {
+          return '全天'
+        }
+        if (currentDate == item.StartDate) {
+          return item.HourStart.toString()+':'+(item.MinuteStart<10?'0'+item.MinuteStart.toString():item.MinuteStart.toString()) +' '+'开始'
+        }
+      }
+      if (currentMonth > item.StartMonth&&currentMonth< item.EndMonth) {
+        return '全天'
+      }
+    }
+    if (currentYear<item.EndYear&&currentYear==item.StartYear) {
+      if (currentMonth > item.StartMonth) {
+        return '全天'
+      }
+      if (currentMonth == item.StartMonth) {
+        if (currentDate > item.StartDate) {
+          return '全天'
+        }
+        if (currentDate == item.StartDate) {
+          return item.HourStart.toString()+':'+(item.MinuteStart<10?'0'+item.MinuteStart.toString():item.MinuteStart.toString()) +' '+'开始'
+        }
+      }
+    }
+    if (currentYear > item.StartYear&&currentYear==item.EndYear) {
+      if (currentMonth < item.EndMonth) {
+        return '全天'
+      }
+      if (currentMonth == item.EndMonth) {
+        if (currentDate < item.EndDate) {
+          return '全天'
+        }
+        if (currentDate = item.EndDate) {
+          return item.HourEnd.toString()+':'+(item.MinuteEnd<10?'0'+item.MinuteEnd.toString():item.MinuteEnd.toString())+' '+'结束'
+        }
+      }
+    }
+    if (currentYear>item.StartYear&&currentYear<item.EndYear) {
+      return '全天'
+    }
+  }
+**/
   build(){
     Row() {
       Column({space:10}){
-        Text(this.item.WholeDay == 1? '全':this.item.EndDate == this.item.StartDate?this.item.HourStart.toString() + ':' +(this.item.MinuteStart <10? '0'+this.item.MinuteStart.toString():
+
+       Text(this.item.WholeDay == 1? '全':this.item.EndDate == this.item.StartDate?this.item.HourStart.toString() + ':' +(this.item.MinuteStart <10? '0'+this.item.MinuteStart.toString():
         this.item.MinuteStart.toString()):this.item.StartDate == this.currentDate?this.item.HourStart.toString() + ':' +(this.item.MinuteStart <10? '0'+this.item.MinuteStart.toString():this.item.MinuteStart.toString()):
         this.item.EndDate == this.currentDate?this.item.HourEnd.toString() + ':' +(this.item.MinuteEnd <10? '0'+this.item.MinuteEnd.toString():this.item.MinuteEnd.toString()):'全')
           .fontSize(10)

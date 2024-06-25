@@ -103,7 +103,7 @@ struct ItemCell {
   @State cjCellStatus: CellStatus = new CellStatus()
   @ObjectLink cjDataItem: CJDateItem
   @Prop today: CJDateItem
-  @Link @Watch("__onSelectChange") selectedItems: Array<CJDateItem>
+  @Link selectedItems: Array<CJDateItem>
   @Prop cjCalStatus: CJCalStatusParams
   selectedStyle: SelectedStyle = SelectedStyle.ALONE
   optMode: OptMode = OptMode.NORMAL
@@ -141,7 +141,7 @@ struct ItemCell {
         // 主题内容
         this.CellMain()
       }
-      .onClick(() => {
+    /**  .onClick(() => {
 
         if ((!this.cjDataItem.isPre && !this.cjDataItem.isNext) ||
           (this.cjDataItem.isPre && this.cjCalStatus.hasPre) ||
@@ -183,7 +183,7 @@ struct ItemCell {
 
         // 回调点击
         this.cellClick(this.cjDataItem)
-      })
+      })**/
     }
   }
 

@@ -38,6 +38,26 @@ struct ContentPage {
 
   @State selectedEndMinute:number = this.item.MinuteEnd
 
+  @State selectedYear:number = this.date.getFullYear()
+
+  @State selectedMonth:number = this.date.getMonth()+1
+
+  @State selectedDate:number = this.date.getDate()
+
+  @State selectedHour:number = this.date.getHours()
+
+  @State selectedMinute:number = this.date.getMinutes()
+
+  @State selectedYear2:number = this.date.getFullYear()
+
+  @State selectedMonth2:number = this.date.getMonth()+1
+
+  @State selectedDate2:number = this.date.getDate()
+
+  @State selectedHour2:number = this.date.getHours()
+
+  @State selectedMinute2:number = this.date.getMinutes()
+
   @State fullDayFlag:boolean = this.item.WholeDay == 1?true:false
 
   day:number = this.date.getDay()
@@ -68,14 +88,18 @@ struct ContentPage {
 
 
   controller:CustomDialogController = new CustomDialogController({
-    builder:DatePickerDialogPage({selectedYear:$selectedStartYear,selectedMonth:$selectedStartMonth,selectedDate:$selectedStartDate,selectedHour:$selectedStartHour,selectedMinute:$selectedStartMinute,fullDayFlag:$fullDayFlag,day1:$day1}),
+    builder:DatePickerDialogPage({selectedStartYear:$selectedStartYear,selectedStartMonth:$selectedStartMonth,selectedStartDate:$selectedStartDate,selectedStartHour:$selectedStartHour,selectedStartMinute:$selectedStartMinute,
+      selectedEndYear:$selectedEndYear,selectedEndMonth:$selectedEndMonth,selectedEndDate:$selectedEndDate,selectedEndHour:$selectedEndHour,selectedEndMinute:$selectedEndMinute, fullDayFlag:$fullDayFlag,
+      selectedYear:$selectedYear,selectedMonth:$selectedMonth,selectedDate:$selectedDate,selectedHour:$selectedHour,selectedMinute:$selectedMinute,day1:$day1}),
     alignment:DialogAlignment.Bottom,
     offset:{dx:0,dy:-10}
 
   })
 
   controller2:CustomDialogController = new CustomDialogController({
-    builder:DatePickerDialogPage2({selectedYear:$selectedEndYear,selectedMonth:$selectedEndMonth,selectedDate:$selectedEndDate,selectedHour:$selectedEndHour,selectedMinute:$selectedEndMinute,fullDayFlag:$fullDayFlag,day1:$day2}),
+    builder:DatePickerDialogPage2({selectedStartYear:$selectedStartYear,selectedStartMonth:$selectedStartMonth,selectedStartDate:$selectedStartDate,selectedStartHour:$selectedStartHour,selectedStartMinute:$selectedStartMinute,
+      selectedEndYear:$selectedEndYear,selectedEndMonth:$selectedEndMonth,selectedEndDate:$selectedEndDate,selectedEndHour:$selectedEndHour,selectedEndMinute:$selectedEndMinute,fullDayFlag:$fullDayFlag,
+      selectedYear2:$selectedYear2,selectedMonth2:$selectedMonth2,selectedDate2:$selectedDate2,selectedHour2:$selectedHour2,selectedMinute2:$selectedMinute2,day2:$day2}),
     alignment:DialogAlignment.Bottom,
     offset:{dx:0,dy:-10}
   })
@@ -115,7 +139,7 @@ struct ContentPage {
               this.item.MinuteEnd = this.selectedEndMinute
 
             this.item.content = this.content
-            let num = await DbUtil.update('DATE',this.item,Const,this.item.Title)
+            let num = await DbUtil.update('DATE',this.item,Const,this.item.id)
             console.log('test6',num.toString())
             router.back()
           })

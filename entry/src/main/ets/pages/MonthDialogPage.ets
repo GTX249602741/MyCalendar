@@ -3,8 +3,7 @@ import { CJDateItem } from '../cjcalendar/src/main/ets/components/components/CJD
 import { Const, ScheduleModel } from '../model/ScheduleModel'
 import relationalStore from '@ohos.data.relationalStore'
 import dbUtil from '../Util/DbUtil'
-
-
+import {getScheduleList} from './Index'
 @Component
 @CustomDialog
 export  struct MonthDialogPage {
@@ -17,9 +16,11 @@ export  struct MonthDialogPage {
 
   @Link currentDate:number
 
-  @Link scheduleModelArray:Array<ScheduleModel>
+  @Link currentHour:number
 
-  @Link hasCalendar:boolean
+  @Link currentMinute:number
+
+  @Link scheduleModelArray:Array<ScheduleModel>
 
   date:Date = new Date()
 
@@ -32,37 +33,6 @@ export  struct MonthDialogPage {
     this.item[0] = today
   }
 
-  async getScheduleList(){
-    this.scheduleModelArray = []
-    let predicates = new relationalStore.RdbPredicates("DATE");
-    predicates.isNotNull("Title");
-    let array = await dbUtil.queryForList(predicates, Const)
-    for (let i of array) {
-      if (i.StartYear <= this.currentYear && i.EndYear >= this.currentYear) {
-        if (i.StartMonth == this.currentMonth && i.EndMonth == this.currentMonth) {
-          if (i.StartDate <= this.currentDate && i.EndDate >= this.currentDate) {
-            this.scheduleModelArray.push(i)
-          }
-        }
-        if (i.StartMonth == this.currentMonth && i.EndMonth != this.currentMonth) {
-          if (i.StartDate <= this.currentDate && i.EndDate >= this.currentDate) {
-            this.scheduleModelArray.push(i)
-          }
-        }
-        if (i.StartMonth < this.currentMonth && i.EndMonth > this.currentMonth) {
-          this.scheduleModelArray.push(i)
-        }
-        if (i.EndMonth == this.currentMonth && i.StartMonth != this.currentMonth) {
-          if (i.StartDate <= this.currentDate && i.EndDate >= this.currentDate) {
-            this.scheduleModelArray.push(i)
-          }
-        }
-      }
-    }
-    if(this.scheduleModelArray.length!=0){
-      this.hasCalendar = true
-    }
-  }
 
   build() {
     Column(){
@@ -72,7 +42,11 @@ export  struct MonthDialogPage {
         this.currentMonth = item[0].month+1
         this.currentDate = item[0].date
 
-        this.getScheduleList()
+        getScheduleList(this.currentYear,this.currentMonth,this.currentDate,this.currentHour,this.currentMinute).then((result:ScheduleModel[])=>{
+          this.scheduleModelArray = result
+        }).catch((err)=>{
+          console.log(err)
+        })
 
       },optMode:OptMode.SINGLE})
     }

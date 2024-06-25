@@ -4,7 +4,9 @@ import { ScheduleModel } from '../model/ScheduleModel'
 import relationalStore from '@ohos.data.relationalStore'
 import dbUtil from '../Util/DbUtil'
 import { Const } from '../model/ScheduleModel'
-
+import {getScheduleList} from './Index'
+import {getScheduleFinishList} from './Index'
+import {getScheduleOutDatedList} from './Index'
 @Component
 export  struct MyOneDayPage {
 
@@ -16,14 +18,18 @@ export  struct MyOneDayPage {
 
   @State currentDate:number = this.date.getDate()
 
+  @State currentHour:number = this.date.getHours()
+
+  @State currentMinute:number = this.date.getMinutes()
+
   @Link scheduleModelArray:Array<ScheduleModel>
 
-  @Link hasCalendar:boolean
+  @State refreshing:boolean = false
 
   scroller:Scroller = new Scroller()
 
   controller:CustomDialogController = new CustomDialogController({
-    builder:MonthDialogPage({currentYear:$currentYear,currentMonth:$currentMonth,currentDate:$currentDate,scheduleModelArray:$scheduleModelArray,hasCalendar:$hasCalendar}),
+    builder:MonthDialogPage({currentYear:$currentYear,currentMonth:$currentMonth,currentDate:$currentDate,currentHour:$currentHour,currentMinute:$currentMinute,scheduleModelArray:$scheduleModelArray}),
     alignment:DialogAlignment.Bottom
   })
 
@@ -58,6 +64,7 @@ export  struct MyOneDayPage {
         }.width('90%')
         .height('7%')
 
+
         Row() {
           Text(this.currentYear.toString() + '年' + this.currentMonth.toString() + '月' + this.currentDate.toString() + '日')
             .fontSize(20)
@@ -65,56 +72,36 @@ export  struct MyOneDayPage {
             .height('10%')
         }
 
+        Refresh({refreshing:$$this.refreshing})
+          .onRefreshing(()=>{
+            setTimeout(() => {
+              let date = new Date()
+              getScheduleList(date.getFullYear(),date.getMonth()+1,date.getDate(),date.getHours(),date.getMinutes()).then((result:ScheduleModel[])=>{
+                this.scheduleModelArray = result
+              }).catch((err)=>{
+                console.log(err)
+              })
+
+              this.refreshing = false
+            }, 500)
+          })
+
         Image($r("app.media.RC"))
           .size({ height: 200, width: 200 })
           .margin({ top: 150 })
-          .visibility(this.hasCalendar == false ? Visibility.Visible : Visibility.None)
+          .visibility(this.scheduleModelArray.length == 0 ? Visibility.Visible : Visibility.None)
         Text('今天要做什么？')
           .fontSize(20)
           .margin({ top: 20 })
-          .visibility(this.hasCalendar == false ? Visibility.Visible : Visibility.None)
+          .visibility(this.scheduleModelArray.length == 0 ? Visibility.Visible : Visibility.None)
         Text('点击+按钮记录一下')
           .fontSize(15)
-          .visibility(this.hasCalendar == false ? Visibility.Visible : Visibility.None)
+          .visibility(this.scheduleModelArray.length == 0 ? Visibility.Visible : Visibility.None)
 
         List({space:15,scroller:this.scroller}) {
           ForEach(this.scheduleModelArray, (item: ScheduleModel) => {
             ListItem() {
-              Row() {
-                Text(item.WholeDay == 1?'全天':item.HourStart.toString() + ':' + (item.MinuteStart < 10 ? '0' + item.MinuteStart.toString() : item.MinuteStart.toString()))
-                  .fontSize(15)
-                  .margin({ left: 10, right: 10 })
-
-                Divider()
-                  .vertical(true)
-                  .color('#0091FF')
-                  .height('70%')
-                  .strokeWidth(4)
-                  .lineCap(LineCapStyle.Round)
-
-                Blank()
-
-                Row() {
-                  Text(item.Title)
-                    .fontSize(25)
-                    .margin({ left: 10 })
-                  Text(item.WholeDay == 1?'全天':item.StartDate == item.EndDate?
-                  item.HourStart.toString() + ':' +(item.MinuteStart <10? '0'+item.MinuteStart.toString(): item.MinuteStart.toString())+'-'+
-                  item.HourEnd.toString() + ':' +(item.MinuteEnd <10? '0'+item.MinuteEnd.toString(): item.MinuteEnd.toString()):
-                  item.StartDate == this.currentDate?item.HourStart.toString() + ':' +(item.MinuteStart <10? '0'+item.MinuteStart.toString(): item.MinuteStart.toString())+' '+'开始':
-                  item.EndDate == this.currentDate?item.HourEnd.toString() + ':' +(item.MinuteEnd <10? '0'+item.MinuteEnd.toString(): item.MinuteEnd.toString())+' '+'结束':'全天'
-                  )
-                    .fontSize(15)
-                    .offset({ x: 0, y: 10 })
-                    .margin({ right: 10 })
-                }
-                .justifyContent(FlexAlign.SpaceBetween)
-                .width('83%')
-                .height('100%')
-                .builder()
-                .borderRadius(15)
-
-              }
+              scheduleItem({item:item,currentDate:$currentDate})
               .height('100%')
               .width('100%')
             }
@@ -123,6 +110,7 @@ export  struct MyOneDayPage {
             .onClick(()=>{
               router.pushUrl({url:'pages/ContentPage',params:{item:item}},router.RouterMode.Single)
             })
+
           })
         }
         .height('70%')
@@ -131,4 +119,59 @@ export  struct MyOneDayPage {
       }.width('100%')
       .height('100%')
     }
+}
+
+@Component
+struct scheduleItem{
+
+  @ObjectLink item:ScheduleModel
+
+  @Link currentDate:number
+
+  @Styles builder(){
+    .backgroundColor('rgba(243, 243, 243, 0.6)')
+    .backdropBlur(20)
+    .shadow({
+      color: 'rgba(0, 0, 0, 0.12)',
+      radius: 30,
+      offsetX: 1,
+      offsetY: 1})
+  }
+  build(){
+    Row() {
+      Text(this.item.WholeDay == 1?'全天':this.item.HourStart.toString() + ':' + (this.item.MinuteStart < 10 ? '0' + this.item.MinuteStart.toString() : this.item.MinuteStart.toString()))
+        .fontSize(15)
+        .margin({ left: 10, right: 10 })
+
+      Divider()
+        .vertical(true)
+        .color('#0091FF')
+        .height('70%')
+        .strokeWidth(4)
+        .lineCap(LineCapStyle.Round)
+
+      Blank()
+
+      Row() {
+        Text(this.item.Title)
+          .fontSize(25)
+          .margin({ left: 10 })
+        Text(this.item.WholeDay == 1?'全天':this.item.StartDate == this.item.EndDate?
+                                              this.item.HourStart.toString() + ':' +(this.item.MinuteStart <10? '0'+this.item.MinuteStart.toString(): this.item.MinuteStart.toString())+'-'+
+                                              this.item.HourEnd.toString() + ':' +(this.item.MinuteEnd <10? '0'+this.item.MinuteEnd.toString(): this.item.MinuteEnd.toString()):
+                                                this.item.StartDate == this.currentDate?this.item.HourStart.toString() + ':' +(this.item.MinuteStart <10? '0'+this.item.MinuteStart.toString(): this.item.MinuteStart.toString())+' '+'开始':
+                                                  this.item.EndDate == this.currentDate?this.item.HourEnd.toString() + ':' +(this.item.MinuteEnd <10? '0'+this.item.MinuteEnd.toString(): this.item.MinuteEnd.toString())+' '+'结束':'全天'
+        )
+          .fontSize(15)
+          .offset({ x: 0, y: 10 })
+          .margin({ right: 10 })
+      }
+      .justifyContent(FlexAlign.SpaceBetween)
+      .width('83%')
+      .height('100%')
+      .builder()
+      .borderRadius(15)
+
+    }
+  }
 }
