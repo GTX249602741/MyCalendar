@@ -67,7 +67,6 @@ export  struct YearPage {
               console.log('test2',this.currentYear.toString())
             })
         }
-        .layoutWeight(1)
         .justifyContent(FlexAlign.SpaceBetween)
         .height(50)
         .width('100%')
@@ -104,7 +103,7 @@ export  struct YearPage {
         }
         .scrollBar(BarState.On)
         .backgroundColor(Color.White)
-        .layoutWeight(2)
+        .layoutWeight(1)
         .margin({top:50})
         .borderRadius(15)
         .columnsTemplate('1fr,1fr,1fr')

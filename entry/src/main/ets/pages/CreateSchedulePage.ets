@@ -150,7 +150,7 @@ struct CreateSchedulePage {
               scheduleModel.HourEnd = null
               scheduleModel.MinuteEnd = null
             }
-            if (this.title == undefined) {
+            if (this.title == undefined || this.title.trim() == '') {
               AlertDialog.show(
                 {
                   title: '',
