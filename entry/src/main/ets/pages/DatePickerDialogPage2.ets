@@ -128,7 +128,7 @@ export  struct DatePickerDialogPage2 {
             }
             else if (value.year > this.selectedStartYear){
               this.selectedEndYear = value.year
-              this.selectedEndMonth = value.month
+              this.selectedEndMonth = value.month+1
               this.selectedEndDate = value.day
             }
 

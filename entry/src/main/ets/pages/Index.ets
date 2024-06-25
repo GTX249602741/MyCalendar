@@ -18,9 +18,29 @@ export async function getToDoList():Promise<ScheduleModel[]>{
   let date = new Date()
   for(let i of array){
   let date1 = new Date(i.EndYear,i.EndMonth-1,i.EndDate,i.HourEnd,i.MinuteEnd)
-  if (date < date1) {
-  list.push(i)
-}
+    if (date.getFullYear() < date1.getFullYear()) {
+      list.push(i)
+    }
+    if (date.getFullYear() == date1.getFullYear()) {
+      if (date.getMonth()+1 < date1.getMonth()+1) {
+        list.push(i)
+      }
+      if (date.getMonth()+1 == date1.getMonth()+1) {
+        if (date.getDate() < date1.getDate()) {
+          list.push(i)
+        }
+        if (date.getDate() == date1.getDate()) {
+          if (date.getHours() < date1.getHours()) {
+            list.push(i)
+          }
+          if (date.getHours() == date1.getHours()) {
+            if (date.getMinutes() < date1.getMinutes()) {
+              list.push(i)
+            }
+          }
+        }
+      }
+    }
 }
 return list
 }
@@ -28,23 +48,44 @@ return list
 export async function getScheduleOutDatedList():Promise<ScheduleModel[]>{
   let ArrayOutDated:ScheduleModel[] = []
   let date1 = new Date()
-  let predicates = new relationalStore.RdbPredicates("DATE");
+  let predicates = new relationalStore.RdbPredicates("DATE")
   predicates.isNotNull("Title")
   let array = await dbUtil.queryForList(predicates, Const)
   for(let i of array){
     let date = new Date(i.EndYear,i.EndMonth-1,i.EndDate,i.HourEnd,i.MinuteEnd)
-    if (date1 > date) {
+
+    if (date1.getFullYear() > date.getFullYear()) {
       ArrayOutDated.push(i)
     }
-    return ArrayOutDated
+    if (date1.getFullYear() == date.getFullYear()) {
+      if (date1.getMonth()+1 > date.getMonth()+1) {
+        ArrayOutDated.push(i)
+      }
+      if (date1.getMonth()+1 == date.getMonth()+1) {
+        if (date1.getDate() > date.getDate()) {
+          ArrayOutDated.push(i)
+        }
+        if (date1.getDate() == date.getDate()) {
+          if (date1.getHours() > date.getHours()) {
+            ArrayOutDated.push(i)
+          }
+          if (date1.getHours() == date.getHours()) {
+            if (date1.getMinutes() > date.getMinutes()) {
+              ArrayOutDated.push(i)
+            }
+          }
+        }
+      }
+    }
   }
+  return ArrayOutDated
 }
 
 
 export async function getScheduleList(currentYear:number,currentMonth:number,currentDate:number,currentHour:number,currentMinute:number):Promise<ScheduleModel[]>{
   let scheduleModelArray:ScheduleModel[] = []
-  let predicates = new relationalStore.RdbPredicates("DATE");
-  predicates.isNotNull("Title");
+  let predicates = new relationalStore.RdbPredicates("DATE")
+  predicates.isNotNull("Title")
   let array = await dbUtil.queryForList(predicates, Const)
   for (let i of array) {
     if (i.StartYear <= currentYear && i.EndYear >= currentYear) {
@@ -222,7 +263,7 @@ export struct Index {
     getScheduleOutDatedList().then((result:ScheduleModel[])=>{
       this.ArrayOutDated = result
     }).catch((err)=>{
-      console.log(err)
+      console.log('test7',err)
     })
 
 
