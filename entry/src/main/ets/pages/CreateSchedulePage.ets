@@ -145,10 +145,10 @@ struct CreateSchedulePage {
               scheduleModel.MinuteEnd = this.selectedEndMinute
             }else {
               scheduleModel.WholeDay = 1
-              scheduleModel.HourStart = null
-              scheduleModel.MinuteStart = null
-              scheduleModel.HourEnd = null
-              scheduleModel.MinuteEnd = null
+              scheduleModel.HourStart = this.selectedStartHour
+              scheduleModel.MinuteStart = this.selectedStartMinute
+              scheduleModel.HourEnd = this.selectedEndHour
+              scheduleModel.MinuteEnd = this.selectedEndMinute
             }
             if (this.title == undefined || this.title.trim() == '') {
               AlertDialog.show(

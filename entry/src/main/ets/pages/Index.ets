@@ -229,11 +229,14 @@ export struct Index {
           Todo({ArrayFinish:$ArrayFinish,ArrayOutDated:$ArrayOutDated,todoList:$todoList})
 
         }.tabBar(this.TabBuilder(2,'待办',$r('app.media.ic_public_todo'),$r('app.media.ic_public_todo_filled')))
-      }.onChange((index:number)=>{
+      }
+      .onChange((index:number)=>{
         this.currentIndex = index
       } )
     }.height('100%')
     .width('100%')
+    .backgroundColor($r('sys.color.ohos_id_color_background'))
+
 
   }
 }

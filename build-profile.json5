@@ -1,6 +1,20 @@
 {
   "app": {
-    "signingConfigs": [],
+    "signingConfigs": [
+      {
+        "name": "default",
+        "type": "HarmonyOS",
+        "material": {
+          "storePassword": "0000001A09BC67A47B02F8D54ECB90AEEF543577F5730B1C226FEF05874C6C6E9494BCE5AA3A57164464",
+          "certpath": "D:/key/defluat.cer",
+          "keyAlias": "mykey",
+          "keyPassword": "0000001AA14E45B37FDF1DACE03E88567821789DABBF1800E5CDAA4743CF9F62C31FA4EEE1556F4964AC",
+          "profile": "D:/key/defluatRelease.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "D:/key/MyCalendar.p12"
+        }
+      }
+    ],
     "compileSdkVersion": 9,
     "compatibleSdkVersion": 9,
     "products": [

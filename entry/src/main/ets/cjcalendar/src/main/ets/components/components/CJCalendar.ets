@@ -42,10 +42,10 @@ export class CJCalStyle {
 
 export class CJCellStyle {
   lunarFontSize: number | string | Resource = 12
-  lunarFontColor: ResourceColor = "#252a34"
+  lunarFontColor: ResourceColor = $r('sys.color.ohos_id_color_text_primary')
   lunarFontFontWeight: FontWeight = FontWeight.Normal
   fontSize: number | string | Resource = 18
-  fontColor: ResourceColor = "#252a34"
+  fontColor: ResourceColor = $r('sys.color.ohos_id_color_text_primary')
   fontFontWeight: FontWeight = FontWeight.Normal
   // 今日字体颜色
   todayFontColor: ResourceColor = "#03A9F4"

@@ -47,7 +47,6 @@ export  struct YearPage {
 
   build() {
     Column() {
-      Stack() {
         Row() {
           Image($r('app.media.ic_public_arrow_left_filled'))
             .height(28)
@@ -58,7 +57,7 @@ export  struct YearPage {
             })
           Text(this.currentYear.toString()+'年')
             .fontSize(18)
-            .fontColor("#252a34")
+            .fontColor($r('sys.color.ohos_id_color_text_primary'))
           Image($r('app.media.ic_public_arrow_right_filled'))
             .height(28)
             .onClick(()=>{
@@ -68,7 +67,7 @@ export  struct YearPage {
             })
         }
         .justifyContent(FlexAlign.SpaceBetween)
-        .height(50)
+        .height('7%')
         .width('100%')
 
         Grid() {
@@ -98,22 +97,15 @@ export  struct YearPage {
             .selectable(true)
             .width('30%')
             .height('17%')
-            .margin({ top:25 })
+            .margin({ top:'7%' })
           })
         }
-        .scrollBar(BarState.On)
-        .backgroundColor(Color.White)
-        .layoutWeight(1)
-        .margin({top:50})
         .borderRadius(15)
         .columnsTemplate('1fr,1fr,1fr')
         .columnsGap('15')
         .rowsGap(15)
         .width('100%')
-        .height('100%')
-      }
-      .alignContent(Alignment.Top)
-      .builder()
+        .height('93%')
     }
     .height('100%')
     .width('100%')
