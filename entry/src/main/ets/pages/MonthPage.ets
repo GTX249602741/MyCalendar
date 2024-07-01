@@ -17,7 +17,7 @@ export struct MonthPage {
 
   date:Date = new Date()
   //linkMonth:any = AppStorage.Link('currentMonth')
-  @State param:any = router.getParams()
+  //@State param:any = router.getParams()
   //linkYear:any = AppStorage.Link('currentYear')
   @State @Watch("onYearChange")currentYear:number = AppStorage.Get('currentYear')
 
@@ -79,7 +79,7 @@ export struct MonthPage {
   }
 
   onPageShow(){
-    getScheduleList(this.currentYear,this.currentMonth,this.currentDate,this.currentHour,this.currentMinute).then((result:ScheduleModel[])=>{
+    getScheduleList(this.currentYear,this.currentMonth,this.currentDate).then((result:ScheduleModel[])=>{
       this.scheduleModelArray = result
       console.log('test5','month'+this.scheduleModelArray.length.toString())
       console.log('test5','MonthTime'+this.currentYear.toString()+this.currentMonth.toString()+this.currentDate.toString()+this.currentHour.toString()+this.currentMinute.toString())
@@ -104,7 +104,7 @@ export struct MonthPage {
         this.currentMonth = item[0].month+1
         this.currentDate = item[0].date
 
-        getScheduleList(this.currentYear,this.currentMonth,this.currentDate,this.currentHour,this.currentMinute).then((result:ScheduleModel[])=>{
+        getScheduleList(this.currentYear,this.currentMonth,this.currentDate).then((result:ScheduleModel[])=>{
           this.scheduleModelArray = result
         }).catch((err)=>{
           console.log(err)

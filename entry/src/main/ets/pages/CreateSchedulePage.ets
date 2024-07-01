@@ -91,7 +91,7 @@ struct CreateSchedulePage {
       offsetX: 1,
       offsetY: 1})
   }
-
+//日程开始时间的弹窗
   controller:CustomDialogController = new CustomDialogController({
     builder:DatePickerDialogPage({selectedStartYear:$selectedStartYear,selectedStartMonth:$selectedStartMonth,selectedStartDate:$selectedStartDate,selectedStartHour:$selectedStartHour,selectedStartMinute:$selectedStartMinute,
       selectedEndYear:$selectedEndYear,selectedEndMonth:$selectedEndMonth,selectedEndDate:$selectedEndDate,selectedEndHour:$selectedEndHour,selectedEndMinute:$selectedEndMinute, fullDayFlag:$fullDayFlag,
@@ -100,7 +100,7 @@ struct CreateSchedulePage {
     offset:{dx:0,dy:-10}
 
   })
-
+//日程结束时间的弹窗
   controller2:CustomDialogController = new CustomDialogController({
     builder:DatePickerDialogPage2({selectedStartYear:$selectedStartYear,selectedStartMonth:$selectedStartMonth,selectedStartDate:$selectedStartDate,selectedStartHour:$selectedStartHour,selectedStartMinute:$selectedStartMinute,
       selectedEndYear:$selectedEndYear,selectedEndMonth:$selectedEndMonth,selectedEndDate:$selectedEndDate,selectedEndHour:$selectedEndHour,selectedEndMinute:$selectedEndMinute,fullDayFlag:$fullDayFlag,
@@ -128,6 +128,7 @@ struct CreateSchedulePage {
         Blank()
         Image($r('app.media.ic_public_ok'))
           .size({width:30,height:30})
+          //点击新建日程到关系型数据库
           .onClick(async ()=>{
             let scheduleModel = new ScheduleModel()
             scheduleModel.StartYear = this.selectedStartYear

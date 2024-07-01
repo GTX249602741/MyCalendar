@@ -19,7 +19,7 @@ export  struct MonthDialogPage {
   @Link currentHour:number
 
   @Link currentMinute:number
-
+  // 由Index传入，存放指定日期的日程数组
   @Link scheduleModelArray:Array<ScheduleModel>
 
   date:Date = new Date()
@@ -42,7 +42,7 @@ export  struct MonthDialogPage {
         this.currentMonth = item[0].month+1
         this.currentDate = item[0].date
 
-        getScheduleList(this.currentYear,this.currentMonth,this.currentDate,this.currentHour,this.currentMinute).then((result:ScheduleModel[])=>{
+        getScheduleList(this.currentYear,this.currentMonth,this.currentDate).then((result:ScheduleModel[])=>{
           this.scheduleModelArray = result
         }).catch((err)=>{
           console.log(err)

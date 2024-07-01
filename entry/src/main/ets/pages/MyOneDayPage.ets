@@ -156,10 +156,10 @@ struct scheduleItem{
           .fontSize(25)
           .margin({ left: 10 })
         Text(this.item.WholeDay == 1?'全天':this.item.StartDate == this.item.EndDate?
-                                              this.item.HourStart.toString() + ':' +(this.item.MinuteStart <10? '0'+this.item.MinuteStart.toString(): this.item.MinuteStart.toString())+'-'+
-                                              this.item.HourEnd.toString() + ':' +(this.item.MinuteEnd <10? '0'+this.item.MinuteEnd.toString(): this.item.MinuteEnd.toString()):
-                                                this.item.StartDate == this.currentDate?this.item.HourStart.toString() + ':' +(this.item.MinuteStart <10? '0'+this.item.MinuteStart.toString(): this.item.MinuteStart.toString())+' '+'开始':
-                                                  this.item.EndDate == this.currentDate?this.item.HourEnd.toString() + ':' +(this.item.MinuteEnd <10? '0'+this.item.MinuteEnd.toString(): this.item.MinuteEnd.toString())+' '+'结束':'全天'
+             this.item.HourStart.toString() + ':' +(this.item.MinuteStart <10? '0'+this.item.MinuteStart.toString(): this.item.MinuteStart.toString())+'-'+
+             this.item.HourEnd.toString() + ':' +(this.item.MinuteEnd <10? '0'+this.item.MinuteEnd.toString(): this.item.MinuteEnd.toString()):
+             this.item.StartDate == this.currentDate?this.item.HourStart.toString() + ':' +(this.item.MinuteStart <10? '0'+this.item.MinuteStart.toString(): this.item.MinuteStart.toString())+' '+'开始':
+             this.item.EndDate == this.currentDate?this.item.HourEnd.toString() + ':' +(this.item.MinuteEnd <10? '0'+this.item.MinuteEnd.toString(): this.item.MinuteEnd.toString())+' '+'结束':'全天'
         )
           .fontSize(15)
           .offset({ x: 0, y: 10 })

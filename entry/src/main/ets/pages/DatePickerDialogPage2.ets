@@ -98,6 +98,8 @@ export  struct DatePickerDialogPage2 {
             this.selectedMonth2 = value.month+1
             this.selectedDate2 = value.day
 
+            //日程结束时间不能小于日程开始时间，若小于，则结束时间等于开始时间
+
             if (value.year == this.selectedStartYear) {
               if (value.month+1 == this.selectedStartMonth) {
                 if (value.day >= this.selectedStartDate) {
@@ -147,6 +149,7 @@ export  struct DatePickerDialogPage2 {
             this.selectedHour2 = value.hour
             this.selectedMinute2 = value.minute
 
+            //日程结束时间不能小于日程开始时间，若小于，则结束时间等于开始时间
             if (this.selectedYear2 >= this.selectedStartYear) {
               if (this.selectedMonth2 == this.selectedStartMonth) {
                 if (this.selectedDate2 == this.selectedStartDate) {

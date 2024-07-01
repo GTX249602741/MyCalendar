@@ -9,7 +9,7 @@ import { Const, ScheduleModel } from '../model/ScheduleModel'
 import thermal from '@ohos.thermal';
 import { Todo } from './Todo'
 import OpenHarmonyTestRunner from '../../../ohosTest/ets/testrunner/OpenHarmonyTestRunner';
-
+// 查询待办列表
 export async function getToDoList():Promise<ScheduleModel[]>{
   let list:ScheduleModel[] = []
   let predicates = new relationalStore.RdbPredicates("DATE");
@@ -44,7 +44,7 @@ export async function getToDoList():Promise<ScheduleModel[]>{
 }
 return list
 }
-
+//查询过期列表
 export async function getScheduleOutDatedList():Promise<ScheduleModel[]>{
   let ArrayOutDated:ScheduleModel[] = []
   let date1 = new Date()
@@ -81,8 +81,8 @@ export async function getScheduleOutDatedList():Promise<ScheduleModel[]>{
   return ArrayOutDated
 }
 
-
-export async function getScheduleList(currentYear:number,currentMonth:number,currentDate:number,currentHour:number,currentMinute:number):Promise<ScheduleModel[]>{
+// 查询指定日期的日程列表
+export async function getScheduleList(currentYear:number,currentMonth:number,currentDate:number):Promise<ScheduleModel[]>{
   let scheduleModelArray:ScheduleModel[] = []
   let predicates = new relationalStore.RdbPredicates("DATE")
   predicates.isNotNull("Title")
@@ -111,7 +111,7 @@ export async function getScheduleList(currentYear:number,currentMonth:number,cur
   }
   return scheduleModelArray
 }
-
+//查询已完成列表
 export async function  getScheduleFinishList():Promise<ScheduleModel[]>{
   let ArrayFinish:ScheduleModel[] = []
   let predicates = new relationalStore.RdbPredicates("DATE");
@@ -146,13 +146,13 @@ export struct Index {
   @State currentIndex:number = 0
 
   @State hasCalendar:boolean = false
-
+  //存放指定日期的日程数组
   @State scheduleModelArray:Array<ScheduleModel> = []
-
+  // 存放已完成日程数组
   @State ArrayFinish:ScheduleModel[] = []
-
+  // 存放过期日程数组
   @State ArrayOutDated:ScheduleModel[] = []
-
+  //存放待办日程数组
   @State todoList:ScheduleModel[] = []
 
   @Builder TabBuilder(index:number,name:string,image:ResourceStr,imagefill:ResourceStr){
@@ -235,7 +235,6 @@ export struct Index {
       } )
     }.height('100%')
     .width('100%')
-    .backgroundColor($r('sys.color.ohos_id_color_background'))
 
 
   }

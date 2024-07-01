@@ -89,6 +89,8 @@ export  struct DatePickerDialogPage {
             let date = new Date(value.year,value.month,value.day)
             this.day1 = this.getDay(date.getDay())
 
+            //日程开始时间不能大于结束时间，若大于，则结束时间会等于开始时间
+
             if (value.year <=this.selectedEndYear) {
               if (value.month+1 <= this.selectedEndMonth) {
                 if (value.day <= this.selectedEndDate) {
@@ -131,7 +133,7 @@ export  struct DatePickerDialogPage {
           .onChange((value: TimePickerResult) => {
             this.selectedHour = value.hour
             this.selectedMinute = value.minute
-
+            //日程开始时间不能大于结束时间，若大于，则结束时间会等于开始时间
             if (this.selectedYear <=this.selectedEndYear) {
               if (this.selectedMonth <= this.selectedEndMonth) {
                 if (this.selectedDate <= this.selectedEndDate) {

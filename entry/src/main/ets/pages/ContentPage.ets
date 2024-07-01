@@ -37,7 +37,7 @@ struct ContentPage {
   @State selectedEndHour:number = this.item.HourEnd
 
   @State selectedEndMinute:number = this.item.MinuteEnd
-
+//往上为详情页显示的时间，往下为弹窗选择的时间
   @State selectedYear:number = this.item.StartYear
 
   @State selectedMonth:number = this.item.StartMonth
@@ -65,7 +65,7 @@ struct ContentPage {
   @State day2:string = this.getDay(this.day)
 
   @State day1:string = this.getDay(this.day)
-
+//获取星期的汉字
   getDay(date:number):string{
     switch (date){
       case 1:
@@ -86,7 +86,7 @@ struct ContentPage {
     }
   }
 
-
+//日程起始时间的选择弹窗
   controller:CustomDialogController = new CustomDialogController({
     builder:DatePickerDialogPage({selectedStartYear:$selectedStartYear,selectedStartMonth:$selectedStartMonth,selectedStartDate:$selectedStartDate,selectedStartHour:$selectedStartHour,selectedStartMinute:$selectedStartMinute,
       selectedEndYear:$selectedEndYear,selectedEndMonth:$selectedEndMonth,selectedEndDate:$selectedEndDate,selectedEndHour:$selectedEndHour,selectedEndMinute:$selectedEndMinute, fullDayFlag:$fullDayFlag,
@@ -95,7 +95,7 @@ struct ContentPage {
     offset:{dx:0,dy:-10}
 
   })
-
+//日程终止时间的选择弹窗
   controller2:CustomDialogController = new CustomDialogController({
     builder:DatePickerDialogPage2({selectedStartYear:$selectedStartYear,selectedStartMonth:$selectedStartMonth,selectedStartDate:$selectedStartDate,selectedStartHour:$selectedStartHour,selectedStartMinute:$selectedStartMinute,
       selectedEndYear:$selectedEndYear,selectedEndMonth:$selectedEndMonth,selectedEndDate:$selectedEndDate,selectedEndHour:$selectedEndHour,selectedEndMinute:$selectedEndMinute,fullDayFlag:$fullDayFlag,
@@ -120,6 +120,7 @@ struct ContentPage {
         Blank()
         Image($r('app.media.ic_public_ok'))
           .size({width:30,height:30})
+          //点击更新日程详情
           .onClick(async ()=>{
             this.item.StartYear = this.selectedStartYear
             this.item.StartMonth = this.selectedStartMonth
